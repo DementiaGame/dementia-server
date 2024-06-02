@@ -1,4 +1,4 @@
-package synapse.dementia.users.domain;
+package synapse.dementia.domain.users.domain;
 
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -16,7 +16,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import synapse.dementia.users.utils.Gender;
+import synapse.dementia.global.domain.BaseEntity;
 
 @Entity
 @Table(name = "users")
@@ -26,14 +26,14 @@ import synapse.dementia.users.utils.Gender;
 @DynamicUpdate
 @Getter
 @Builder(toBuilder = true)
-public class Users extends EntityDate {
+public class Users extends BaseEntity {
 	@Id
 	@Column(name = "users_seq")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long users_seq;
 
 	@Column(name = "birth_year", nullable = false)
-	private Long birthYear;
+	private Integer birthYear;
 
 	@Column(name = "gender", nullable = false)
 	@Enumerated(EnumType.STRING)
@@ -42,10 +42,16 @@ public class Users extends EntityDate {
 	@Column(name = "nick_name", nullable = false)
 	private String nickName;
 
+	@Column(name = "password", nullable = false)
+	private String password;
+
 	@Column(name = "deleted", nullable = false)
 	private Boolean deleted = false;
 
 	@Column(name = "face_date", nullable = true, columnDefinition = "TEXT")
 	@Lob
 	private String faceData;
+
+	@Column(name = "profile_image", nullable = true)
+	private String profileImage;
 }

@@ -1,4 +1,4 @@
-package synapse.dementia.users.utils;
+package synapse.dementia.domain.users.domain;
 
 import org.springframework.http.HttpStatus;
 
