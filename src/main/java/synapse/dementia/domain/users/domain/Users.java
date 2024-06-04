@@ -30,7 +30,7 @@ public class Users extends BaseEntity {
 	@Id
 	@Column(name = "users_seq")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long users_seq;
+	private Long usersSeq;
 
 	@Column(name = "birth_year", nullable = false)
 	private Integer birthYear;
