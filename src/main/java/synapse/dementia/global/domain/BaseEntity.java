@@ -1,4 +1,4 @@
-package synapse.dementia.users.domain;
+package synapse.dementia.global.domain;
 
 import java.time.LocalDateTime;
 
@@ -14,7 +14,7 @@ import lombok.Getter;
 @EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass
 @Getter
-public abstract class EntityDate {
+public abstract class BaseEntity {
 
 	@CreatedDate
 	@Column(nullable = false,updatable = false)

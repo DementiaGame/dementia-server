@@ -1,4 +1,4 @@
-package synapse.dementia.users.utils;
+package synapse.dementia.domain.users.domain;
 
 import org.springframework.http.HttpStatus;
 
@@ -8,5 +8,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum Gender {
-	MALE, FEMALE
+	MALE, FEMALE;
+
+	private String gender;
 }
