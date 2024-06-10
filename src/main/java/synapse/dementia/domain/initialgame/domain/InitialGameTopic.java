@@ -3,21 +3,14 @@ package synapse.dementia.domain.initialgame.domain;
 import jakarta.persistence.*;
 import synapse.dementia.global.domain.BaseEntity;
 
-import java.util.List;
-
 @Entity
-@Table(name="initial_game_topics")
+@Table(name="INITIAL_GAME_TOPICS")
 public class InitialGameTopic extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="topic_id")
     private Long topicIdx;
 
-    @Column(nullable = false)
+    @Column(name="topic_name",nullable = false)
     private String topicName;
-
-    @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<InitialGameQuestion> questions;
-
-    @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<InitialGameResult> results;
 }
