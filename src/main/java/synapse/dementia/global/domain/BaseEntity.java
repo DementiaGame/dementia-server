@@ -2,13 +2,11 @@ package synapse.dementia.global.domain;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 
 @EntityListeners(AuditingEntityListener.class)
@@ -23,4 +21,19 @@ public abstract class BaseEntity {
 	@LastModifiedDate
 	@Column(nullable = false,updatable = false)
 	private LocalDateTime modifiedAt;
+
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	private CommonStatus status=CommonStatus.ACTIVE;
+
+	public void active(){
+		this.status=CommonStatus.ACTIVE;
+	}
+
+	public void inActive(){
+		this.status=CommonStatus.INACTIVE;
+	}
+	public void delete(){
+		this.status=CommonStatus.DELETED;
+	}
 }
