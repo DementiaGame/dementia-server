@@ -10,7 +10,7 @@ public class InitialGameQuestion extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long questionId;
+    private Long questionIdx;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="topic_id",nullable = false)

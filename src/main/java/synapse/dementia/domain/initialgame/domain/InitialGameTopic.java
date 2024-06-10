@@ -10,7 +10,7 @@ import java.util.List;
 public class InitialGameTopic extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long topicId;
+    private Long topicIdx;
 
     @Column(nullable = false)
     private String topicName;
