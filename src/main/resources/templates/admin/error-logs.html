@@ -11,7 +11,6 @@
     <table class="table table-striped mt-4">
         <thead class="thead-dark">
         <tr>
-            <th>ID</th>
             <th>Server IP</th>
             <th>Request URL</th>
             <th>Request Method</th>
@@ -25,7 +24,6 @@
         </thead>
         <tbody>
         <tr th:each="log : ${errorLogs}">
-            <td th:text="${log.apiErrorLogsIdx}"></td>
             <td th:text="${log.serverIp}"></td>
             <td th:text="${log.requestURL}"></td>
             <td th:text="${log.requestMethod}"></td>
