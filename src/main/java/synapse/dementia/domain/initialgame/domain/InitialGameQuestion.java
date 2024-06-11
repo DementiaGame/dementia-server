@@ -1,12 +1,15 @@
 package synapse.dementia.domain.initialgame.domain;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import synapse.dementia.global.domain.BaseEntity;
 
 @Entity
 @Getter
 @Table(name="INITIAL_GAME_QUESTIONS")
+@NoArgsConstructor(access= AccessLevel.PROTECTED)
 public class InitialGameQuestion extends BaseEntity {
 
     @Id
@@ -25,7 +28,6 @@ public class InitialGameQuestion extends BaseEntity {
     //초성퀴즈 정답
     @Column(name="answer_word", nullable = false)
     private String answerWord;
-
 
     //쿠폰받을 때 생성가능
     @Column(name="hint_image",nullable = true)
