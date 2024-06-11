@@ -12,25 +12,19 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import synapse.dementia.global.domain.BaseEntity;
 
 @Entity
 @Table(name = "users")
-@AllArgsConstructor
-@NoArgsConstructor
 @DynamicInsert
 @DynamicUpdate
 @Getter
-@Builder(toBuilder = true)
 public class Users extends BaseEntity {
 	@Id
-	@Column(name = "users_seq")
+	@Column(name = "users_idx")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long usersSeq;
+	private Long usersIdx;
 
 	@Column(name = "birth_year", nullable = false)
 	private Integer birthYear;
@@ -56,6 +50,6 @@ public class Users extends BaseEntity {
 	private String profileImage;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name="role", nullable=false)
+	@Column(name = "role", nullable = false)
 	private Role role;
 }

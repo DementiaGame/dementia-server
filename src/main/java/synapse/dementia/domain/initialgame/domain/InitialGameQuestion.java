@@ -2,12 +2,10 @@ package synapse.dementia.domain.initialgame.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.ToString;
 import synapse.dementia.global.domain.BaseEntity;
 
 @Entity
 @Getter
-@ToString
 @Table(name="INITIAL_GAME_QUESTIONS")
 public class InitialGameQuestion extends BaseEntity {
 
@@ -17,8 +15,8 @@ public class InitialGameQuestion extends BaseEntity {
     private Long questionIdx;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="topic_id",nullable = false)
-    private InitialGameTopic topicIdx;
+    @JoinColumn(name="topic_idx",nullable = false)
+    private InitialGameTopic topic;
 
     //초성퀴즈 문제
     @Column(name="consonant_quiz", nullable = false)
