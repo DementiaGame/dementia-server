@@ -6,11 +6,12 @@ import synapse.dementia.domain.users.domain.Users;
 import synapse.dementia.global.domain.BaseEntity;
 
 @Entity
-@Table(name="initial_game_results")
+@Table(name="INITIAL_GAME_RESULTS")
 @Getter
 public class InitialGameResult extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="result_id")
     private Long resultIdx;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -21,10 +22,10 @@ public class InitialGameResult extends BaseEntity {
     @JoinColumn(name="topic_id", nullable = false)
     private InitialGameTopic topic;
 
-    @Column(nullable = false)
-    private Integer score;
+    @Column(name="game_score",nullable = false)
+    private Integer gameScore;
 
-    @Column(nullable = false)
+    @Column(name="hearts", nullable = false)
     private Integer hearts;
 
 }
