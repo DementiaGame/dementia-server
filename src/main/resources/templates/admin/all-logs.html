@@ -14,7 +14,6 @@
             background-color: #182b47;
             border: none;
             border-radius: 1rem;
-            margin-bottom: 2rem; /* 섹션 간 여백 추가 */
         }
 
         .card .card-body {
@@ -63,143 +62,162 @@
             font-weight: bold;
             color: #ffffff;
         }
+
+        /* Modal text color */
+        .modal-content {
+            color: #000000;
+        }
+
+        /* Card container margin */
+        .card-container {
+            margin-top: 2rem; /* 상단 공백 추가 */
+            margin-bottom: 2rem; /* 하단 공백 추가 */
+        }
+        #main-content {
+            overflow-y: auto;
+            padding-bottom: 2rem; /* 하단 공백 추가 */
+        }
     </style>
 </head>
 <body>
 <div class="container mt-5">
-    <div class="card">
-        <div class="card-body">
-            <table class="table table-striped mt-4">
-                <thead class="thead-dark">
-                <tr>
-                    <th>ID</th>
-                    <th>Birth Year</th>
-                    <th>Gender</th>
-                    <th>Nick Name</th>
-                    <th>Profile Image</th>
-                    <th>ROLE</th>
-                    <th>수정</th>
-                    <th>삭제</th>
-                </tr>
-                </thead>
-                <tbody>
-                <div class="section-title">
-                    <h2>Users</h2>
-                </div>
-                <tr th:each="user : ${users}">
-                    <td th:text="${user.usersIdx}"></td>
-                    <td th:text="${user.birthYear}"></td>
-                    <td th:text="${user.gender}"></td>
-                    <td th:text="${user.nickName}"></td>
-                    <td th:text="${user.profileImage}"></td>
-                    <td th:text="${user.role}"></td>
-                    <td>
-                        <a th:href="@{'/admin/users/edit/' + ${user.usersIdx}}" class="btn btn-primary btn-sm">수정</a>
-                    </td>
-                    <td>
-                        <button class="btn btn-danger btn-sm" data-toggle="modal"
-                                th:data-target="'#deleteModal' + ${user.usersIdx}">삭제
-                        </button>
-                        <!-- Delete Modal -->
-                        <div class="modal fade" th:id="'deleteModal' + ${user.usersIdx}" tabindex="-1" role="dialog"
-                             aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">삭제 확인</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <div class="modal-body">
-                                        정말로 삭제하시겠습니까?
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
-                                        <form th:action="@{'/admin/users/delete/' + ${user.usersIdx}}" method="post"
-                                              style="display:inline;">
-                                            <input type="hidden" name="_method" value="delete"/>
-                                            <button type="submit" class="btn btn-danger">삭제</button>
-                                        </form>
+    <div id="main-content">
+        <div class="card-container">
+            <div class="card">
+                <div class="card-body">
+                    <div class="section-title">
+                        <h2>Users</h2>
+                    </div>
+                    <table class="table table-striped mt-4">
+                        <thead class="thead-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Birth Year</th>
+                            <th>Gender</th>
+                            <th>Nick Name</th>
+                            <th>Profile Image</th>
+                            <th>ROLE</th>
+                            <th>수정</th>
+                            <th>삭제</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="user : ${users}">
+                            <td th:text="${user.usersIdx}"></td>
+                            <td th:text="${user.birthYear}"></td>
+                            <td th:text="${user.gender}"></td>
+                            <td th:text="${user.nickName}"></td>
+                            <td th:text="${user.profileImage}"></td>
+                            <td th:text="${user.role}"></td>
+                            <td>
+                                <a th:href="@{'/admin/users/edit/' + ${user.usersIdx}}" class="btn btn-primary btn-sm">수정</a>
+                            </td>
+                            <td>
+                                <button class="btn btn-danger btn-sm" data-toggle="modal" th:data-target="'#deleteModal' + ${user.usersIdx}">삭제</button>
+                                <!-- Delete Modal -->
+                                <div class="modal fade" th:id="'deleteModal' + ${user.usersIdx}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">삭제 확인</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                정말로 삭제하시겠습니까?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+                                                <form th:action="@{'/admin/users/delete/' + ${user.usersIdx}}" method="post" style="display:inline;">
+                                                    <input type="hidden" name="_method" value="delete"/>
+                                                    <button type="submit" class="btn btn-danger">삭제</button>
+                                                </form>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        <!-- End of Delete Modal -->
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-body">
-            <table class="table table-striped">
-                <thead class="thead-dark">
-                <tr>
-                    <th>Server IP</th>
-                    <th>Request URL</th>
-                    <th>Request Method</th>
-                    <th>Response Status</th>
-                    <th>Client IP</th>
-                    <th>Request Time</th>
-                    <th>Response Time</th>
-                    <th>Connection Time</th>
-                </tr>
-                </thead>
-                <tbody>
-                <div class="section-title">
-                    <h2>API Success Logs</h2>
+                                <!-- End of Delete Modal -->
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
-                <tr th:each="log : ${successLogs}">
-                    <td th:text="${log.serverIp}"></td>
-                    <td th:text="${log.requestURL}"></td>
-                    <td th:text="${log.requestMethod}"></td>
-                    <td th:text="${log.responseStatus}"></td>
-                    <td th:text="${log.clientIp}"></td>
-                    <td th:text="${#temporals.format(log.requestTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
-                    <td th:text="${#temporals.format(log.responseTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
-                    <td th:text="${log.connectionTime}"></td>
-                </tr>
-                </tbody>
-            </table>
+            </div>
         </div>
-    </div>
 
-    <div class="card">
-        <div class="card-body">
-            <table class="table table-striped">
-                <thead class="thead-dark">
-                <tr>
-                    <th>Server IP</th>
-                    <th>Request URL</th>
-                    <th>Request Method</th>
-                    <th>Response Status</th>
-                    <th>Client IP</th>
-                    <th>Request Time</th>
-                    <th>Response Time</th>
-                    <th>Connection Time</th>
-                    <th>Error Message</th>
-                </tr>
-                </thead>
-                <tbody>
-                <div class="section-title">
-                    <h2>API Error Logs</h2>
+        <div class="card-container">
+            <div class="card">
+                <div class="card-body">
+                    <div class="section-title">
+                        <h2>API Success Logs</h2>
+                    </div>
+                    <table class="table table-striped">
+                        <thead class="thead-dark">
+                        <tr>
+                            <th>Server IP</th>
+                            <th>Request URL</th>
+                            <th>Request Method</th>
+                            <th>Response Status</th>
+                            <th>Client IP</th>
+                            <th>Request Time</th>
+                            <th>Response Time</th>
+                            <th>Connection Time</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="log : ${successLogs}">
+                            <td th:text="${log.serverIp}"></td>
+                            <td th:text="${log.requestURL}"></td>
+                            <td th:text="${log.requestMethod}"></td>
+                            <td th:text="${log.responseStatus}"></td>
+                            <td th:text="${log.clientIp}"></td>
+                            <td th:text="${#temporals.format(log.requestTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                            <td th:text="${#temporals.format(log.responseTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                            <td th:text="${log.connectionTime}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
-                <tr th:each="log : ${errorLogs}">
-                    <td th:text="${log.serverIp}"></td>
-                    <td th:text="${log.requestURL}"></td>
-                    <td th:text="${log.requestMethod}"></td>
-                    <td th:text="${log.responseStatus}"></td>
-                    <td th:text="${log.clientIp}"></td>
-                    <td th:text="${#temporals.format(log.requestTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
-                    <td th:text="${#temporals.format(log.responseTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
-                    <td th:text="${log.connectionTime}"></td>
-                    <td th:text="${log.errorMessage}"></td>
-                </tr>
-                </tbody>
-            </table>
+            </div>
+        </div>
+
+        <div class="card-container">
+            <div class="card">
+                <div class="card-body">
+                    <div class="section-title">
+                        <h2>API Error Logs</h2>
+                    </div>
+                    <table class="table table-striped">
+                        <thead class="thead-dark">
+                        <tr>
+                            <th>Server IP</th>
+                            <th>Request URL</th>
+                            <th>Request Method</th>
+                            <th>Response Status</th>
+                            <th>Client IP</th>
+                            <th>Request Time</th>
+                            <th>Response Time</th>
+                            <th>Connection Time</th>
+                            <th>Error Message</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="log : ${errorLogs}">
+                            <td th:text="${log.serverIp}"></td>
+                            <td th:text="${log.requestURL}"></td>
+                            <td th:text="${log.requestMethod}"></td>
+                            <td th:text="${log.responseStatus}"></td>
+                            <td th:text="${log.clientIp}"></td>
+                            <td th:text="${#temporals.format(log.requestTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                            <td th:text="${#temporals.format(log.responseTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                            <td th:text="${log.connectionTime}"></td>
+                            <td th:text="${log.errorMessage}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>
