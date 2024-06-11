@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>회원 관리</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h1 class="text-center">회원 관리</h1>
+    <table class="table table-striped mt-4">
+        <thead class="thead-dark">
+        <tr>
+            <th>ID</th>
+            <th>Birth Year</th>
+            <th>Gender</th>
+            <th>Nick Name</th>
+            <th>Profile Image</th>
+            <th>ROLE</th>
+            <th>수정</th>
+            <th>삭제</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${users}">
+            <td th:text="${user.usersIdx}"></td>
+            <td th:text="${user.birthYear}"></td>
+            <td th:text="${user.gender}"></td>
+            <td th:text="${user.nickName}"></td>
+            <td>
+                <img th:src="${user.profileImage}" alt="Profile Image" style="width: 50px; height: 50px;">
+            </td>
+            <td th:text="${user.role}"></td>
+            <td>
+                <a th:href="@{'/admin/users/edit/' + ${user.usersIdx}}" class="btn btn-primary btn-sm">수정</a>
+            </td>
+            <td>
+                <form th:action="@{'/admin/users/delete/' + ${user.usersIdx}}" method="post">
+                    <input type="hidden" name="_method" value="delete"/>
+                    <button type="submit" class="btn btn-danger btn-sm">삭제</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
