@@ -17,7 +17,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "api_success_logs")
+@Table(name = "API_SUCCESS_LOGS")
 @AllArgsConstructor
 @NoArgsConstructor
 @DynamicInsert
@@ -26,9 +26,9 @@ import lombok.NoArgsConstructor;
 @Builder(toBuilder = true)
 public class ApiSuccessLogs {
 	@Id
-	@Column(name = "api_success_logs_seq")
+	@Column(name = "api_success_logs_idx")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long apiSuccessLogsSeq;
+	private Long apiSuccessLogsIdx;
 
 	@Column(name = "server_ip")
 	private String serverIp;
