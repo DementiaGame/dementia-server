@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import synapse.dementia.domain.users.domain.Gender;
 import synapse.dementia.domain.users.domain.Role;
+import synapse.dementia.domain.users.domain.Users;
 
 public record UsersSignUpReq(
 	@NotBlank(message = "닉네임을 입력해주세요.")
@@ -32,5 +33,13 @@ public record UsersSignUpReq(
 			deleted = false;
 		if (role == null)
 			role = Role.ROLE_USER;
+	}
+
+	public UsersSignUpReq(String nickName, String password, String secondPassword, Integer birthYear, Gender gender) {
+		this(nickName, password, secondPassword, birthYear, gender, false, Role.ROLE_USER);
+	}
+
+	public Users toEntity(String password) {
+		return new Users(nickName, password, birthYear, gender, deleted, role);
 	}
 }
