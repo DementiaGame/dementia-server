@@ -53,6 +53,9 @@ public class Users extends BaseEntity {
 	@Column(name = "role", nullable = false)
 	private Role role;
 
+	protected Users() {
+	}
+	
 	public Users(String nickName, String password, Integer birthYear, Gender gender, Boolean deleted, Role role) {
 		this.nickName = nickName;
 		this.password = password;
