@@ -34,7 +34,5 @@ public class InitialGameTopicInitializer implements CommandLineRunner {
         // 엑셀 파일로부터 주제 저장
         List<InitialGameTopic> savedTopics = initialGameTopicService.saveTopicsFromExcel(inputStream);
 
-        // 저장된 주제 출력 (디버그용)
-        savedTopics.forEach(topic -> System.out.println("Saved Topic: " + topic.getTopicName()));
     }
 }

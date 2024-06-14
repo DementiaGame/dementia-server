@@ -5,6 +5,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import synapse.dementia.domain.initialgame.constant.InitialGameTopicConstants;
 import synapse.dementia.domain.initialgame.domain.InitialGameTopic;
 import synapse.dementia.domain.initialgame.repository.InitialTopicRepository;
@@ -22,16 +23,18 @@ public class InitialGameTopicService {
         this.initialTopicRepository = initialTopicRepository;
     }
 
+    @Transactional
     public List<InitialGameTopic> saveTopicsFromExcel(InputStream inputStream) throws IOException {
         List<String> topicsList = readExcelFile(inputStream);
-        List<InitialGameTopic> savedTopics = new ArrayList<>();
+        List<InitialGameTopic> topics = new ArrayList<>();
 
         for (String topicName : topicsList) {
-            InitialGameTopic topic = new InitialGameTopic(topicName);
-            savedTopics.add(initialTopicRepository.save(topic));
+            topics.add(new InitialGameTopic(topicName));
         }
-        return savedTopics;
+
+        return initialTopicRepository.saveAll(topics);
     }
+
 
     private List<String> readExcelFile(InputStream inputStream) throws IOException {
         List<String> topicsList = new ArrayList<>();
