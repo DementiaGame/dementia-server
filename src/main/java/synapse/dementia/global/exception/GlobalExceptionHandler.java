@@ -69,6 +69,36 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return makeErrorResponseEntity(ErrorResult.UNKNOWN_EXCEPTION);
 	}
 
+	@ExceptionHandler({NotFoundException.class})
+	public ResponseEntity<ErrorResponse> handleNotFoundException(final NotFoundException exception,
+		HttpServletRequest request, HttpServletResponse response) {
+		log.warn("NotFoundException occur: ", exception);
+		saveErrorLog(request, exception.getErrorResult().getHttpStatus().value(),
+			exception.getErrorResult().getMessage());
+		response.setStatus(exception.getErrorResult().getHttpStatus().value());
+		return makeErrorResponseEntity(exception.getErrorResult());
+	}
+
+	@ExceptionHandler({DuplicateNickNameException.class})
+	public ResponseEntity<ErrorResponse> handleDuplicateNickNameException(final DuplicateNickNameException exception,
+		HttpServletRequest request, HttpServletResponse response) {
+		log.warn("DupicateNickNameException occur: ", exception);
+		saveErrorLog(request, exception.getErrorResult().getHttpStatus().value(),
+			exception.getErrorResult().getMessage());
+		response.setStatus(exception.getErrorResult().getHttpStatus().value());
+		return makeErrorResponseEntity(exception.getErrorResult());
+	}
+
+	@ExceptionHandler({MismatchPasswordException.class})
+	public ResponseEntity<ErrorResponse> handleMismatchPasswordException(final MismatchPasswordException exception,
+		HttpServletRequest request, HttpServletResponse response) {
+		log.warn("MismatchPasswordException occur: ", exception);
+		saveErrorLog(request, exception.getErrorResult().getHttpStatus().value(),
+			exception.getErrorResult().getMessage());
+		response.setStatus(exception.getErrorResult().getHttpStatus().value());
+		return makeErrorResponseEntity(exception.getErrorResult());
+	}
+
 	// <-- Exception 정의
 
 	private void saveErrorLog(HttpServletRequest request, int status, String errorMessage) {
