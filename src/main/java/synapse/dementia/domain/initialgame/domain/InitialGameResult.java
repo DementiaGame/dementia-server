@@ -1,13 +1,16 @@
 package synapse.dementia.domain.initialgame.domain;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import synapse.dementia.domain.users.domain.Users;
 import synapse.dementia.global.domain.BaseEntity;
 
 @Entity
 @Table(name="INITIAL_GAME_RESULTS")
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class InitialGameResult extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
