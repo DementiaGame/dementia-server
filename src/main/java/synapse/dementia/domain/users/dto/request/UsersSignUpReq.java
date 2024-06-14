@@ -1,6 +1,7 @@
 package synapse.dementia.domain.users.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import synapse.dementia.domain.users.domain.Gender;
 import synapse.dementia.domain.users.domain.Role;
@@ -18,10 +19,10 @@ public record UsersSignUpReq(
 	@Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*?_]).{8,16}$", message = "비밀번호는 8~16자리면서 알파벳, 숫자, 특수문자를 포함해야 합니다.")
 	String secondPassword,
 
-	@NotBlank(message = "출생연도를 입력해주세요.")
+	@NotNull(message = "출생연도를 입력해주세요.")
 	Integer birthYear,
 
-	@NotBlank(message = "성별을 입력해주세요.")
+	@NotNull(message = "성별을 입력해주세요.")
 	Gender gender,
 	Boolean deleted,
 	Role role
