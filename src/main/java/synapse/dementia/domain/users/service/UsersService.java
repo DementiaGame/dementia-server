@@ -13,7 +13,6 @@ import synapse.dementia.global.exception.ConflictException;
 import synapse.dementia.global.exception.ErrorResult;
 
 @Service
-@Transactional
 public class UsersService {
 
 	private final UsersRepository usersRepository;
@@ -24,6 +23,7 @@ public class UsersService {
 		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
 	}
 
+	@Transactional
 	public UsersSignUpRes signUp(UsersSignUpReq dto) {
 		// todo: 1. 중복 닉네임 체크 2. 비밀번호 재확인 3. 비밀번호 암호화 4. save 5. return user's nickName in response
 		if (usersRepository.findByNickName(dto.nickName()).isPresent()) {
