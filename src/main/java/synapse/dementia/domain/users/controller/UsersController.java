@@ -1,6 +1,5 @@
 package synapse.dementia.domain.users.controller;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,9 +21,10 @@ public class UsersController {
 	}
 
 	@PostMapping("/signUp")
-	public ResponseEntity<BaseResponse<UsersSignUpRes>> signUp(@Validated @RequestBody UsersSignUpReq dto) {
+	public BaseResponse signUp(@Validated @RequestBody UsersSignUpReq dto) {
 		UsersSignUpRes usersSignUpRes = usersService.signUp(dto);
-		BaseResponse<UsersSignUpRes> response = BaseResponse.of(201, "SUCCESS", usersSignUpRes);
-		return ResponseEntity.ok(response);
+		BaseResponse<UsersSignUpRes> response = BaseResponse.ofSuccess(usersSignUpRes);
+
+		return response;
 	}
 }
