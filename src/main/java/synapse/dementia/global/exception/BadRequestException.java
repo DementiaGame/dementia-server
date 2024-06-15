@@ -5,6 +5,6 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class MismatchPasswordException extends RuntimeException {
+public class BadRequestException extends RuntimeException {
 	private final ErrorResult errorResult;
 }
