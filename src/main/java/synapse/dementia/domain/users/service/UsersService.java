@@ -36,6 +36,6 @@ public class UsersService {
 
 		Users user = dto.toEntity(bCryptPasswordEncoder.encode(dto.password()));
 		usersRepository.save(user);
-		return UsersSignUpRes.fromEntity(user);
+		return new UsersSignUpRes(user.getNickName());
 	}
 }
