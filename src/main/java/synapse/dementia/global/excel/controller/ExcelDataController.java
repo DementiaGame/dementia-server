@@ -6,7 +6,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import synapse.dementia.global.excel.service.ExcelDataService;
-import jakarta.annotation.PostConstruct;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,7 +25,8 @@ public class ExcelDataController {
     @PostConstruct
     public void init(){
         try{
-            ClassPathResource path=new ClassPathResource("excel/initial_game_data.xlsx");
+            //ClassPathResource path=new ClassPathResource("excel/initial_game_data.xlsx");
+            ClassPathResource path=new ClassPathResource("excel/initial_game_tmp_data.xlsx");
             InputStream inputStream=path.getInputStream();
             excelDataService.saveExcelData(inputStream);
         }catch (IOException e){

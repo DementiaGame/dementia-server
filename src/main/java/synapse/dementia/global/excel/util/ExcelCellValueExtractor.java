@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ExcelCellValueExtractor {
 
+    //엑셀 데이터 추출하는 메서드
     public String getCellValue(Cell cell) {
         if (cell == null) {
             return null;  // 또는 "(empty)"와 같은 기본 값을 반환
