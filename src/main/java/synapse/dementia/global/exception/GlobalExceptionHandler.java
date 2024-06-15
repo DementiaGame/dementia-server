@@ -79,20 +79,20 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return makeErrorResponseEntity(exception.getErrorResult());
 	}
 
-	@ExceptionHandler({DuplicateNickNameException.class})
-	public ResponseEntity<ErrorResponse> handleDuplicateNickNameException(final DuplicateNickNameException exception,
+	@ExceptionHandler({BadRequestException.class})
+	public ResponseEntity<ErrorResponse> handleBadRequestException(final BadRequestException exception,
 		HttpServletRequest request, HttpServletResponse response) {
-		log.warn("DupicateNickNameException occur: ", exception);
+		log.warn("ConflictException occur: ", exception);
 		saveErrorLog(request, exception.getErrorResult().getHttpStatus().value(),
 			exception.getErrorResult().getMessage());
 		response.setStatus(exception.getErrorResult().getHttpStatus().value());
 		return makeErrorResponseEntity(exception.getErrorResult());
 	}
 
-	@ExceptionHandler({MismatchPasswordException.class})
-	public ResponseEntity<ErrorResponse> handleMismatchPasswordException(final MismatchPasswordException exception,
+	@ExceptionHandler({ConflictException.class})
+	public ResponseEntity<ErrorResponse> handleConflictException(final ConflictException exception,
 		HttpServletRequest request, HttpServletResponse response) {
-		log.warn("MismatchPasswordException occur: ", exception);
+		log.warn("ConflictException occur: ", exception);
 		saveErrorLog(request, exception.getErrorResult().getHttpStatus().value(),
 			exception.getErrorResult().getMessage());
 		response.setStatus(exception.getErrorResult().getHttpStatus().value());
