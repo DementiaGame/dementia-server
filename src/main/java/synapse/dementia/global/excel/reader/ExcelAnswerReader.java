@@ -26,7 +26,7 @@ public class ExcelAnswerReader {
             Row row = sheet.getRow(rowIndex);
             if (row != null) {
                 List<String> rowData = new ArrayList<>();
-                for (int colIndex = 1; colIndex <= 13; colIndex++) {
+                for (int colIndex = ExcelDataConstants.START_COLUMN; colIndex <= ExcelDataConstants.END_COLUMN; colIndex++) {
                     String value = cellValueExtractor.getCellValue(row.getCell(colIndex));
                     if (value != null) {
                         rowData.add(value);

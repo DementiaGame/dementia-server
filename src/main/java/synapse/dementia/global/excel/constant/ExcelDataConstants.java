@@ -8,5 +8,5 @@ public class ExcelDataConstants {
     public static final int END_COLUMN =13; // N열
 
     public static final int ANSWER_START_ROW=2;
-    public static final int ANSWER_END_ROW=105;
+    public static final int ANSWER_END_ROW=31;
 }
