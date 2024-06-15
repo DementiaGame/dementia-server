@@ -5,6 +5,6 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class DuplicateNickNameException extends RuntimeException {
+public class ConflictException extends RuntimeException {
 	private final ErrorResult errorResult;
 }
