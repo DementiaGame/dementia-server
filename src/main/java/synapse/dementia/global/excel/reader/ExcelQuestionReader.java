@@ -18,9 +18,14 @@ public class ExcelQuestionReader {
         this.excelCellValueExtractor = excelCellValueExtractor;
     }
 
+    //중복 로직 메서드화
     public List<List<String>> readQuestions(XSSFWorkbook workbook) {
         List<List<String>> questionList = new ArrayList<>();
-        XSSFSheet sheet = workbook.getSheetAt(3);
+        XSSFSheet sheet = workbook.getSheetAt(ExcelDataConstants.QUESTION_SHEET_NUMBER);
+        return getLists(questionList, sheet, excelCellValueExtractor);
+    }
+
+    static List<List<String>> getLists(List<List<String>> questionList, XSSFSheet sheet, ExcelCellValueExtractor excelCellValueExtractor) {
         for (int rowIndex = ExcelDataConstants.ANSWER_START_ROW; rowIndex <= ExcelDataConstants.ANSWER_END_ROW; rowIndex++) {
             Row row = sheet.getRow(rowIndex);
             if (row != null) {

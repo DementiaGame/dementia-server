@@ -21,6 +21,7 @@ public class ExcelReader {
         this.questionReader = questionReader;
     }
 
+    //주제랑 정답 매칭하는 메서드
     public List<ExcelData> mapTopicsToAnswers(InputStream inputStream) throws IOException {
         try (XSSFWorkbook workbook = new XSSFWorkbook(inputStream)) {
             List<String> topics = topicReader.readTopics(workbook);

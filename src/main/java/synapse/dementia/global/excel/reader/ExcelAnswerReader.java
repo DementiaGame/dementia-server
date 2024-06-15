@@ -11,6 +11,8 @@ import synapse.dementia.global.excel.util.ExcelCellValueExtractor;
 import java.util.ArrayList;
 import java.util.List;
 
+import static synapse.dementia.global.excel.reader.ExcelQuestionReader.getLists;
+
 @Component
 public class ExcelAnswerReader {
     private final ExcelCellValueExtractor cellValueExtractor;
@@ -22,19 +24,6 @@ public class ExcelAnswerReader {
     public List<List<String>> readAnswers(XSSFWorkbook workbook) {
         List<List<String>> answerList = new ArrayList<>();
         XSSFSheet sheet = workbook.getSheetAt(ExcelDataConstants.SHEET_NUMBER);
-        for (int rowIndex = ExcelDataConstants.ANSWER_START_ROW; rowIndex <= ExcelDataConstants.ANSWER_END_ROW; rowIndex++) {
-            Row row = sheet.getRow(rowIndex);
-            if (row != null) {
-                List<String> rowData = new ArrayList<>();
-                for (int colIndex = ExcelDataConstants.START_COLUMN; colIndex <= ExcelDataConstants.END_COLUMN; colIndex++) {
-                    String value = cellValueExtractor.getCellValue(row.getCell(colIndex));
-                    if (value != null) {
-                        rowData.add(value);
-                    }
-                }
-                answerList.add(rowData);
-            }
-        }
-        return answerList;
+        return getLists(answerList, sheet, cellValueExtractor);
     }
 }
