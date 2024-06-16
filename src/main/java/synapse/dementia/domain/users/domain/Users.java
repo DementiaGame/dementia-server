@@ -1,5 +1,7 @@
 package synapse.dementia.domain.users.domain;
 
+import jakarta.websocket.server.ServerEndpoint;
+import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -20,6 +22,7 @@ import synapse.dementia.global.domain.BaseEntity;
 @DynamicInsert
 @DynamicUpdate
 @Getter
+@Setter
 public class Users extends BaseEntity {
 	@Id
 	@Column(name = "users_idx")
