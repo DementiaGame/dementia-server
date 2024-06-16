@@ -11,7 +11,7 @@ import synapse.dementia.domain.initialgame.service.GameTopicService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/topics")
+@RequestMapping("/api/initial/topics")
 public class InitialGameTopicController {
 
     private final GameTopicService gameTopicService;
