@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import synapse.dementia.global.domain.BaseEntity;
+import synapse.dementia.global.excel.model.ExcelData;
 
 @Entity
 @Getter
@@ -19,8 +20,8 @@ public class InitialGameQuestion extends BaseEntity {
     private Long questionIdx;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="topic_idx",nullable = false)
-    private InitialGameTopic topic;
+    @JoinColumn(name="excel_data_id", nullable = false)
+    private ExcelData excelData;
 
     //초성퀴즈 문제
     @Column(name="consonant_quiz")
@@ -35,11 +36,10 @@ public class InitialGameQuestion extends BaseEntity {
     private String hintImage;
 
     @Builder
-    public InitialGameQuestion(InitialGameTopic topic, String consonantQuiz, String answerWord, String hintImage) {
-        this.topic = topic;
+    public InitialGameQuestion(ExcelData excelData, String consonantQuiz, String answerWord, String hintImage) {
+        this.excelData = excelData;
         this.consonantQuiz = consonantQuiz;
         this.answerWord = answerWord;
         this.hintImage = hintImage;
     }
-
 }

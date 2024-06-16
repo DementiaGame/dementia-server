@@ -12,5 +12,7 @@ import java.util.Optional;
 public interface ExcelDataRepository extends JpaRepository<ExcelData,Long> {
     @Query("SELECT DISTINCT e.topic FROM ExcelData e")
     List<String> findDistinctTopics();
+    List<ExcelData> findByTopic(String topic);
+
 
 }
