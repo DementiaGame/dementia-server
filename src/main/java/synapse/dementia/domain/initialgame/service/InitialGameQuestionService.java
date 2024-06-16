@@ -32,19 +32,28 @@ public class InitialGameQuestionService {
         List<ExcelData> excelDataList = excelDataRepository.findByTopic(request.topicName());
         Random random = new Random();
 
-        return excelDataList.stream()
+        // 모든 문제를 가져와서 셔플하고 10개를 선택
+        List<ExcelData> shuffledExcelDataList = excelDataList.stream()
+                .collect(Collectors.collectingAndThen(Collectors.toList(), collected -> {
+                    Collections.shuffle(collected, random);
+                    return collected.stream().limit(10).collect(Collectors.toList());
+                }));
+
+        // 무작위로 선택된 문제들을 InitialGameQuestion으로 변환
+        List<InitialGameQuestion> initialGameQuestions = shuffledExcelDataList.stream()
                 .map(excelData -> InitialGameQuestion.builder()
                         .excelData(excelData)
                         .consonantQuiz(excelData.getQuestion())
                         .answerWord(excelData.getAnswer())
                         .hintImage(null) // hintImage는 쿠폰 사용 시 설정
                         .build())
-                .collect(Collectors.collectingAndThen(Collectors.toList(), collected -> {
-                    // 무작위로 섞고 필요한 개수만큼 자르기
-                    Collections.shuffle(collected, random);
-                    return collected.stream().limit(10).collect(Collectors.toList());
-                }))
-                .stream()
+                .collect(Collectors.toList());
+
+        // 문제를 저장하여 ID를 생성
+        List<InitialGameQuestion> savedQuestions = initialGameQuestionRepository.saveAll(initialGameQuestions);
+
+        // InitialGameQuestionResponse로 변환하여 반환
+        return savedQuestions.stream()
                 .map(initialGameQuestion -> new InitialGameQuestionResponse(
                         initialGameQuestion.getQuestionIdx(),
                         initialGameQuestion.getExcelData().getIdx(),
