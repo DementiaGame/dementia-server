@@ -69,6 +69,36 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return makeErrorResponseEntity(ErrorResult.UNKNOWN_EXCEPTION);
 	}
 
+	@ExceptionHandler({NotFoundException.class})
+	public ResponseEntity<ErrorResponse> handleNotFoundException(final NotFoundException exception,
+		HttpServletRequest request, HttpServletResponse response) {
+		log.warn("NotFoundException occur: ", exception);
+		saveErrorLog(request, exception.getErrorResult().getHttpStatus().value(),
+			exception.getErrorResult().getMessage());
+		response.setStatus(exception.getErrorResult().getHttpStatus().value());
+		return makeErrorResponseEntity(exception.getErrorResult());
+	}
+
+	@ExceptionHandler({BadRequestException.class})
+	public ResponseEntity<ErrorResponse> handleBadRequestException(final BadRequestException exception,
+		HttpServletRequest request, HttpServletResponse response) {
+		log.warn("ConflictException occur: ", exception);
+		saveErrorLog(request, exception.getErrorResult().getHttpStatus().value(),
+			exception.getErrorResult().getMessage());
+		response.setStatus(exception.getErrorResult().getHttpStatus().value());
+		return makeErrorResponseEntity(exception.getErrorResult());
+	}
+
+	@ExceptionHandler({ConflictException.class})
+	public ResponseEntity<ErrorResponse> handleConflictException(final ConflictException exception,
+		HttpServletRequest request, HttpServletResponse response) {
+		log.warn("ConflictException occur: ", exception);
+		saveErrorLog(request, exception.getErrorResult().getHttpStatus().value(),
+			exception.getErrorResult().getMessage());
+		response.setStatus(exception.getErrorResult().getHttpStatus().value());
+		return makeErrorResponseEntity(exception.getErrorResult());
+	}
+
 	// <-- Exception 정의
 
 	private void saveErrorLog(HttpServletRequest request, int status, String errorMessage) {

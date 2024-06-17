@@ -52,4 +52,16 @@ public class Users extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "role", nullable = false)
 	private Role role;
+
+	protected Users() {
+	}
+	
+	public Users(String nickName, String password, Integer birthYear, Gender gender, Boolean deleted, Role role) {
+		this.nickName = nickName;
+		this.password = password;
+		this.birthYear = birthYear;
+		this.gender = gender;
+		this.deleted = deleted;
+		this.role = role;
+	}
 }
