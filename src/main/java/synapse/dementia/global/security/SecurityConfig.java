@@ -81,7 +81,7 @@ public class SecurityConfig {
 					.FrameOptionsConfig::sameOrigin)
 			)
 			.authorizeHttpRequests(authorize -> authorize
-				.requestMatchers("/", "/users/signUp", "/auth/signIn").permitAll()
+				.requestMatchers("/", "/users/signup", "/auth/signin").permitAll()
 				// .requestMatchers("/admin/**").hasRole(Role.ROLE_ADMIN.name())
 				.anyRequest().authenticated())
 			.addFilterBefore(

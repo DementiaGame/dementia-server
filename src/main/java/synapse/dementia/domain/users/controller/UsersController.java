@@ -20,7 +20,7 @@ public class UsersController {
 		this.usersService = usersService;
 	}
 
-	@PostMapping("/signUp")
+	@PostMapping("/signup")
 	public BaseResponse signUp(@Validated @RequestBody UsersSignUpReq dto) {
 		UsersSignUpRes usersSignUpRes = usersService.signUp(dto);
 		BaseResponse<UsersSignUpRes> response = BaseResponse.ofSuccess(usersSignUpRes);
