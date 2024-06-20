@@ -19,9 +19,9 @@ public class InitialGameResultController {
         this.initialGameResultService = initialGameResultService;
     }
 
-    @PostMapping("/check")
-    public ResponseEntity<BaseResponse> checkAnswer(@RequestBody InitialGameResultRequest request) {
-        InitialGameResultResponse response = initialGameResultService.checkAnswer(request);
+    @PostMapping("/check/{userId}/{questionIdx}")
+    public ResponseEntity<BaseResponse> checkAnswer(@PathVariable Long userId, @PathVariable Long questionIdx, @RequestBody InitialGameResultRequest request) {
+        InitialGameResultResponse response = initialGameResultService.checkAnswer(userId, questionIdx, request);
         return ResponseEntity.ok(BaseResponse.ofSuccess(response));
     }
 }

@@ -27,10 +27,10 @@ public class InitialGameResultService {
     }
 
     @Transactional
-    public InitialGameResultResponse checkAnswer(InitialGameResultRequest request) {
-        Users user = userRepository.findById(request.userId())
+    public InitialGameResultResponse checkAnswer(Long userId, Long questionIdx, InitialGameResultRequest request) {
+        Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
-        InitialGameQuestion question = initialGameQuestionRepository.findById(request.questionIdx())
+        InitialGameQuestion question = initialGameQuestionRepository.findById(questionIdx)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid question ID"));
 
         boolean correct = question.getAnswerWord().equalsIgnoreCase(request.answer());
