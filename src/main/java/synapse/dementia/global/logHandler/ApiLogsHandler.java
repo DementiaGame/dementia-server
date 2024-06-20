@@ -32,7 +32,7 @@ public class ApiLogsHandler {
 		return new RequestContextListener();
 	}
 
-	@Pointcut("within(synapse.dementia.domain..*)")
+	@Pointcut("within(synapse.dementia.domain..*) && !execution(* synapse.dementia.domain.logs.service.LogsServiceImpl.getServerIp(..)) && !execution(* synapse.dementia.domain.logs.service.LogsServiceImpl.saveSuccessLogs(..)) && !execution(* synapse.dementia.domain.logs.service.LogsServiceImpl.saveErrorLogs(..))")
 	public void onRequest() {
 	}
 
@@ -43,8 +43,8 @@ public class ApiLogsHandler {
 		String serverIp = logsService.getServerIp().orElse(UNKNOWN_SERVER);
 
 		try {
-			request = ((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getRequest();
-			response = ((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getResponse();
+			request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+			response = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getResponse();
 
 			if (response == null) {
 				logger.warn(HTTP_SERVLET_RESPONSE_NULL);
