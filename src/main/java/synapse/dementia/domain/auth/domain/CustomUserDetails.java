@@ -25,6 +25,11 @@ public class CustomUserDetails implements UserDetails {
 		return roles;
 	}
 
+
+	public Long getUsersIdx() {
+		return usersIdx;
+	}
+
 	@Override
 	public String getPassword() {
 		return password;

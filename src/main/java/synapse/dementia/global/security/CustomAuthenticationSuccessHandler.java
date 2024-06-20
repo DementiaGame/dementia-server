@@ -16,11 +16,12 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import synapse.dementia.domain.auth.domain.CustomUserDetails;
+import synapse.dementia.domain.auth.dto.response.UsersSignInRes;
 
 @Component
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
-	private static final Logger log = LoggerFactory.getLogger(CustomAuthenticationSuccessHandler.class);
+	//private static final Logger log = LoggerFactory.getLogger(CustomAuthenticationSuccessHandler.class);
 	private ObjectMapper objectMapper = new ObjectMapper();
 
 	@Override
@@ -29,9 +30,13 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
 		CustomUserDetails user = (CustomUserDetails)authentication.getPrincipal();
 
-		response.setStatus(HttpStatus.OK.value());
-		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+		UsersSignInRes usersSignInRes = new UsersSignInRes(user.getUsersIdx(), user.getUsername(), user.getAuthorities());
 
-		objectMapper.writeValue(response.getWriter(), user);
+		response.setStatus(HttpStatus.OK.value());
+		//response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+		response.setContentType("application/json;charset=UTF-8");
+		response.setCharacterEncoding("UTF-8");
+
+		objectMapper.writeValue(response.getWriter(), usersSignInRes);
 	}
 }
