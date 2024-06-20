@@ -1,4 +1,4 @@
-package synapse.dementia.domain.auth.dto.response;
+package synapse.dementia.domain.users.dto.response;
 
 import java.util.Collection;
 

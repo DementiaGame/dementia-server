@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import synapse.dementia.domain.auth.dto.request.UsersSignInReq;
+import synapse.dementia.domain.users.dto.request.UsersSignInReq;
 import synapse.dementia.global.exception.BadRequestException;
 import synapse.dementia.global.exception.ErrorResult;
 

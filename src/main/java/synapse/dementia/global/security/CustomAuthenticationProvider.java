@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import synapse.dementia.domain.auth.domain.CustomUserDetails;
+import synapse.dementia.domain.users.domain.CustomUserDetails;
 
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {

@@ -1,4 +1,4 @@
-package synapse.dementia.domain.auth.dto.request;
+package synapse.dementia.domain.users.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 

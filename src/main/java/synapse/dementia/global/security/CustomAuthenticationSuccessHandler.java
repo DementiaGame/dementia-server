@@ -2,10 +2,7 @@ package synapse.dementia.global.security;
 
 import java.io.IOException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -15,8 +12,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import synapse.dementia.domain.auth.domain.CustomUserDetails;
-import synapse.dementia.domain.auth.dto.response.UsersSignInRes;
+import synapse.dementia.domain.users.domain.CustomUserDetails;
+import synapse.dementia.domain.users.dto.response.UsersSignInRes;
 
 @Component
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {

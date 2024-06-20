@@ -1,4 +1,4 @@
-package synapse.dementia.domain.auth.service;
+package synapse.dementia.domain.users.service;
 
 import java.util.Optional;
 
@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import synapse.dementia.domain.auth.domain.CustomUserDetails;
+import synapse.dementia.domain.users.domain.CustomUserDetails;
 import synapse.dementia.domain.users.domain.Users;
 import synapse.dementia.domain.users.repository.UsersRepository;
 import synapse.dementia.global.exception.ErrorResult;
