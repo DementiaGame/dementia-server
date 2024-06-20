@@ -8,23 +8,14 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
 import synapse.dementia.domain.users.domain.Role;
 import synapse.dementia.domain.users.domain.Users;
 
-@Entity
 public class CustomUserDetails implements UserDetails {
 
-	@Id
 	private Long usersIdx;
-	@Column
 	private String nickName;
-	@Column
 	private String password;
-
-	@Column
 	private Role role;
 
 	@Override
@@ -32,7 +23,6 @@ public class CustomUserDetails implements UserDetails {
 		List<GrantedAuthority> roles = new ArrayList<>();
 		roles.add(new SimpleGrantedAuthority(role.name()));
 		return roles;
-		//return List.of();
 	}
 
 	@Override
