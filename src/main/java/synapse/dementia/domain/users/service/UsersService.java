@@ -40,7 +40,7 @@ public class UsersService {
 
 		Users user = dto.toEntity(bCryptPasswordEncoder.encode(dto.password()));
 		usersRepository.save(user);
-		return new UsersSignUpRes(user.getNickName());
+		return new UsersSignUpRes(user.getUsersIdx(), user.getNickName());
 	}
 
 	@Transactional(readOnly = true)
