@@ -28,7 +28,7 @@ public class InitialGameQuestionService {
     }
 
     @Transactional(readOnly = true)
-    public List<InitialGameQuestionResponse> getRandomQuestionsByTopic(SelectGameTopicRequest request) {
+    public List<InitialGameQuestionResponse> getRandomQuestionsByTopic(Long userId, SelectGameTopicRequest request) {
         List<ExcelData> excelDataList = excelDataRepository.findByTopic(request.topicName());
         Random random = new Random();
 
