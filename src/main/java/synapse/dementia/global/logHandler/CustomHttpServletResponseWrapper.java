@@ -11,6 +11,9 @@ public class CustomHttpServletResponseWrapper extends HttpServletResponseWrapper
 
 	public CustomHttpServletResponseWrapper(HttpServletResponse response) {
 		super(response);
+		if (response == null) {
+			throw new IllegalArgumentException("Response cannot be null");
+		}
 	}
 
 	@Override
