@@ -24,4 +24,10 @@ public class InitialGameResultController {
         InitialGameResultResponse response = initialGameResultService.checkAnswer(userId, questionIdx, request);
         return ResponseEntity.ok(BaseResponse.ofSuccess(response));
     }
+
+    @GetMapping("/total-correct/{userId}")
+    public ResponseEntity<BaseResponse> getTotalCorrectAnswers(@PathVariable Long userId) {
+        int totalCorrect = initialGameResultService.getTotalCorrectAnswers(userId);
+        return ResponseEntity.ok(BaseResponse.ofSuccess(totalCorrect));
+    }
 }

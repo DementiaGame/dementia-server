@@ -12,6 +12,8 @@ import synapse.dementia.domain.initialgame.repository.InitialGameQuestionReposit
 import synapse.dementia.domain.users.domain.Users;
 import synapse.dementia.domain.users.repository.UsersRepository;
 
+import java.util.Optional;
+
 @Service
 public class InitialGameResultService {
 
@@ -35,17 +37,39 @@ public class InitialGameResultService {
 
         boolean correct = question.getAnswerWord().equalsIgnoreCase(request.answer());
 
-        InitialGameResult initialGameResult = InitialGameResult.builder()
-                .user(user)
-                .excelData(question.getExcelData())
-                .hintImage(question.getHintImage())
-                .correct(correct)
-                .gameScore(correct ? 1 : 0)
-                .hearts(correct ? 1 : 0)
-                .build();
+        Optional<InitialGameResult> existingResultOpt = initialGameResultRepository.findByUserAndQuestion(user, question);
+
+        InitialGameResult initialGameResult;
+        if (existingResultOpt.isPresent()) {
+            initialGameResult = existingResultOpt.get();
+            if (correct) {
+                initialGameResult.incrementGameScore();
+                initialGameResult.incrementHearts();
+                initialGameResult.setCorrect(true);
+            } else {
+                initialGameResult.decrementHearts();
+                initialGameResult.setCorrect(false);
+            }
+        } else {
+            initialGameResult = InitialGameResult.builder()
+                    .user(user)
+                    .question(question)
+                    .hintImage(question.getHintImage())
+                    .correct(correct)
+                    .gameScore(correct ? 1 : 0)
+                    .hearts(correct ? 1 : 0)
+                    .build();
+        }
 
         InitialGameResult savedResult = initialGameResultRepository.save(initialGameResult);
 
-        return new InitialGameResultResponse(savedResult.getResultIdx(), savedResult.getUser().getUsersIdx(), savedResult.getExcelData().getIdx(), savedResult.getCorrect(), savedResult.getGameScore(), savedResult.getHearts());
+        return new InitialGameResultResponse(savedResult.getResultIdx(), savedResult.getUser().getUsersIdx(), savedResult.getQuestion().getQuestionIdx(), savedResult.getCorrect(), savedResult.getGameScore(), savedResult.getHearts());
+    }
+
+    @Transactional(readOnly = true)
+    public int getTotalCorrectAnswers(Long userId) {
+        Users user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
+        return initialGameResultRepository.countCorrectAnswersByUser(user);
     }
 }
