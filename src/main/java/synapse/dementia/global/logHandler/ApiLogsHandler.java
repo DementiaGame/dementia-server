@@ -1,10 +1,6 @@
 package synapse.dementia.global.logHandler;
 
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.time.LocalDateTime;
-import java.util.Enumeration;
-import java.util.Optional;
+import static synapse.dementia.domain.logs.constant.LogsConstants.*;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -21,8 +17,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import synapse.dementia.domain.logs.domain.ApiSuccessLogs;
-import synapse.dementia.domain.logs.repository.SuccessLogsRepository;
+import synapse.dementia.domain.logs.service.LogsService;
 
 @Component
 @Aspect
@@ -30,14 +25,14 @@ import synapse.dementia.domain.logs.repository.SuccessLogsRepository;
 public class ApiLogsHandler {
 
 	private static final Logger logger = LoggerFactory.getLogger(ApiLogsHandler.class);
-	private final SuccessLogsRepository logsRepository;
+	private final LogsService logsService;
 
 	@Bean
 	public RequestContextListener requestContextListener() {
 		return new RequestContextListener();
 	}
 
-	@Pointcut("within(synapse.dementia.domain..*)")
+	@Pointcut("within(synapse.dementia.domain..*) && !execution(* synapse.dementia.domain.logs.service.LogsServiceImpl.getServerIp(..)) && !execution(* synapse.dementia.domain.logs.service.LogsServiceImpl.saveSuccessLogs(..)) && !execution(* synapse.dementia.domain.logs.service.LogsServiceImpl.saveErrorLogs(..))")
 	public void onRequest() {
 	}
 
@@ -45,14 +40,14 @@ public class ApiLogsHandler {
 	public Object requestLogging(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
 		HttpServletRequest request = null;
 		HttpServletResponse response = null;
-		String serverIp = getServerIp().orElse("Unknown");
+		String serverIp = logsService.getServerIp().orElse(UNKNOWN_SERVER);
 
 		try {
-			request = ((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getRequest();
-			response = ((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getResponse();
+			request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+			response = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getResponse();
 
 			if (response == null) {
-				logger.warn("HttpServletResponse is null, skipping logging");
+				logger.warn(HTTP_SERVLET_RESPONSE_NULL);
 				return proceedingJoinPoint.proceed(proceedingJoinPoint.getArgs());
 			}
 
@@ -61,46 +56,11 @@ public class ApiLogsHandler {
 			long start = System.currentTimeMillis();
 			Object result = proceedingJoinPoint.proceed(proceedingJoinPoint.getArgs());
 			long end = System.currentTimeMillis();
-			saveSuccessLog(request, responseWrapper, serverIp, start, end);
+			logsService.saveSuccessLogs(request, responseWrapper, serverIp, start, end);
 			return result;
 		} catch (IllegalStateException e) {
-			logger.error("IllegalStateException encountered", e);
+			logger.error(ILLEGAL_STATE_EXCEPTION_ENCOUNTERED, e);
 			return proceedingJoinPoint.proceed(proceedingJoinPoint.getArgs());
 		}
-	}
-
-	private void saveSuccessLog(HttpServletRequest request, CustomHttpServletResponseWrapper responseWrapper,
-		String serverIp, long start, long end) {
-		ApiSuccessLogs log = ApiSuccessLogs.builder()
-			.serverIp(serverIp)
-			.requestURL(request.getRequestURL().toString())
-			.requestMethod(request.getMethod())
-			.responseStatus(responseWrapper.getStatus())
-			.clientIp(request.getRemoteAddr())
-			.requestTime(LocalDateTime.now())
-			.responseTime(LocalDateTime.now().plusNanos(end - start))
-			.connectionTime(end - start)
-			.build();
-
-		logsRepository.save(log);
-	}
-
-	private Optional<String> getServerIp() {
-		try {
-			Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-			while (interfaces.hasMoreElements()) {
-				NetworkInterface networkInterface = interfaces.nextElement();
-				Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
-				while (inetAddresses.hasMoreElements()) {
-					InetAddress inetAddress = inetAddresses.nextElement();
-					if (!inetAddress.isLoopbackAddress() && inetAddress.isSiteLocalAddress()) {
-						return Optional.of(inetAddress.getHostAddress());
-					}
-				}
-			}
-		} catch (Exception e) {
-			logger.error("Error while getting server IP address", e);
-		}
-		return Optional.empty();
 	}
 }
