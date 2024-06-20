@@ -4,28 +4,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import synapse.dementia.domain.initialgame.domain.InitialGameQuestion;
-import synapse.dementia.domain.initialgame.domain.InitialGameResult;
 import synapse.dementia.domain.initialgame.dto.request.InitialGameResultRequest;
 import synapse.dementia.domain.initialgame.dto.response.InitialGameResultResponse;
-import synapse.dementia.domain.initialgame.repository.InitialGameResultRepository;
 import synapse.dementia.domain.initialgame.repository.InitialGameQuestionRepository;
 import synapse.dementia.domain.users.domain.Users;
 import synapse.dementia.domain.users.repository.UsersRepository;
 
-import java.util.Optional;
-
 @Service
 public class InitialGameResultService {
 
-    private final InitialGameResultRepository initialGameResultRepository;
-    private final UsersRepository userRepository;
     private final InitialGameQuestionRepository initialGameQuestionRepository;
+    private final UsersRepository userRepository;
 
     @Autowired
-    public InitialGameResultService(InitialGameResultRepository initialGameResultRepository, UsersRepository userRepository, InitialGameQuestionRepository initialGameQuestionRepository) {
-        this.initialGameResultRepository = initialGameResultRepository;
-        this.userRepository = userRepository;
+    public InitialGameResultService(InitialGameQuestionRepository initialGameQuestionRepository, UsersRepository userRepository) {
         this.initialGameQuestionRepository = initialGameQuestionRepository;
+        this.userRepository = userRepository;
     }
 
     @Transactional
@@ -37,39 +31,23 @@ public class InitialGameResultService {
 
         boolean correct = question.getAnswerWord().equalsIgnoreCase(request.answer());
 
-        Optional<InitialGameResult> existingResultOpt = initialGameResultRepository.findByUserAndQuestion(user, question);
-
-        InitialGameResult initialGameResult;
-        if (existingResultOpt.isPresent()) {
-            initialGameResult = existingResultOpt.get();
-            if (correct) {
-                initialGameResult.incrementGameScore();
-                initialGameResult.incrementHearts();
-                initialGameResult.setCorrect(true);
-            } else {
-                initialGameResult.decrementHearts();
-                initialGameResult.setCorrect(false);
-            }
+        if (correct) {
+            question.incrementHearts();
+            question.setCorrect(true);
         } else {
-            initialGameResult = InitialGameResult.builder()
-                    .user(user)
-                    .question(question)
-                    .hintImage(question.getHintImage())
-                    .correct(correct)
-                    .gameScore(correct ? 1 : 0)
-                    .hearts(correct ? 1 : 0)
-                    .build();
+            question.decrementHearts();
+            question.setCorrect(false);
         }
 
-        InitialGameResult savedResult = initialGameResultRepository.save(initialGameResult);
+        InitialGameQuestion savedQuestion = initialGameQuestionRepository.save(question);
 
-        return new InitialGameResultResponse(savedResult.getResultIdx(), savedResult.getUser().getUsersIdx(), savedResult.getQuestion().getQuestionIdx(), savedResult.getCorrect(), savedResult.getGameScore(), savedResult.getHearts());
+        return new InitialGameResultResponse(savedQuestion.getQuestionIdx(), savedQuestion.getUser().getUsersIdx(), savedQuestion.getCorrect(), savedQuestion.getGameScore());
     }
 
     @Transactional(readOnly = true)
     public int getTotalCorrectAnswers(Long userId) {
         Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
-        return initialGameResultRepository.countCorrectAnswersByUser(user);
+        return initialGameQuestionRepository.countByUserAndCorrect(user, true);
     }
 }

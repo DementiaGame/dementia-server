@@ -28,9 +28,9 @@ public class InitialGameTopicController {
         return ResponseEntity.ok(BaseResponse.ofSuccess(topics));
     }
 
-    @PostMapping("/{userId}")
-    public ResponseEntity<BaseResponse> selectTopic(@PathVariable Long userId, @RequestBody SelectGameTopicRequest request) {
-        SelectedGameTopicResponse response = initialGameTopicService.selectTopic(userId, request);
+    @PostMapping("/{userIdx}/select")
+    public ResponseEntity<BaseResponse> selectTopic(@PathVariable Long userIdx, @RequestBody SelectGameTopicRequest request) {
+        SelectedGameTopicResponse response = initialGameTopicService.selectTopic(userIdx, request);
         return ResponseEntity.ok(BaseResponse.ofSuccess(response));
     }
 }

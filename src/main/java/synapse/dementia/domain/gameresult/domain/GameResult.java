@@ -1,4 +1,4 @@
-package synapse.dementia.domain.initialgame.domain;
+package synapse.dementia.domain.gameresult.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -9,10 +9,10 @@ import synapse.dementia.domain.users.domain.Users;
 import synapse.dementia.global.domain.BaseEntity;
 
 @Entity
-@Table(name = "INITIAL_GAME_RESULTS")
 @Getter
+@Table(name = "GAME_RESULTS")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class InitialGameResult extends BaseEntity {
+public class GameResult extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "result_id")
@@ -22,34 +22,21 @@ public class InitialGameResult extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private Users user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "question_id", nullable = false)
-    private InitialGameQuestion question;
-
-    @Column(name = "hint_image", nullable = true)
-    private String hintImage;
+    @Column(name = "game_type", nullable = false)
+    private String gameType;
 
     @Column(name = "correct", nullable = false)
     private Boolean correct;
-
-    @Column(name = "game_score", nullable = false)
-    private Integer gameScore;
 
     @Column(name = "gameScore", nullable = false)
     private Integer hearts;
 
     @Builder
-    public InitialGameResult(Users user, InitialGameQuestion question, String hintImage, Boolean correct, Integer gameScore, Integer hearts) {
+    public GameResult(Users user, String gameType, Boolean correct, Integer hearts) {
         this.user = user;
-        this.question = question;
-        this.hintImage = hintImage;
+        this.gameType = gameType;
         this.correct = correct;
-        this.gameScore = gameScore;
         this.hearts = hearts;
-    }
-
-    public void incrementGameScore() {
-        this.gameScore += 1;
     }
 
     public void incrementHearts() {

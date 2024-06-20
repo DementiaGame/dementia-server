@@ -19,15 +19,15 @@ public class InitialGameResultController {
         this.initialGameResultService = initialGameResultService;
     }
 
-    @PostMapping("/check/{userId}/{questionIdx}")
-    public ResponseEntity<BaseResponse> checkAnswer(@PathVariable Long userId, @PathVariable Long questionIdx, @RequestBody InitialGameResultRequest request) {
-        InitialGameResultResponse response = initialGameResultService.checkAnswer(userId, questionIdx, request);
+    @PostMapping("/check/{userIdx}/{questionIdx}")
+    public ResponseEntity<BaseResponse> checkAnswer(@PathVariable Long userIdx, @PathVariable Long questionIdx, @RequestBody InitialGameResultRequest request) {
+        InitialGameResultResponse response = initialGameResultService.checkAnswer(userIdx, questionIdx, request);
         return ResponseEntity.ok(BaseResponse.ofSuccess(response));
     }
 
-    @GetMapping("/total-correct/{userId}")
-    public ResponseEntity<BaseResponse> getTotalCorrectAnswers(@PathVariable Long userId) {
-        int totalCorrect = initialGameResultService.getTotalCorrectAnswers(userId);
+    @GetMapping("/total-correct/{userIdx}")
+    public ResponseEntity<BaseResponse> getTotalCorrectAnswers(@PathVariable Long userIdx) {
+        int totalCorrect = initialGameResultService.getTotalCorrectAnswers(userIdx);
         return ResponseEntity.ok(BaseResponse.ofSuccess(totalCorrect));
     }
 }
