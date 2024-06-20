@@ -20,7 +20,7 @@ public class InitialGameResultController {
     }
 
     @PostMapping("/check")
-    public ResponseEntity<BaseResponse<InitialGameResultResponse>> checkAnswer(@RequestBody InitialGameResultRequest request) {
+    public ResponseEntity<BaseResponse> checkAnswer(@RequestBody InitialGameResultRequest request) {
         InitialGameResultResponse response = initialGameResultService.checkAnswer(request);
         return ResponseEntity.ok(BaseResponse.ofSuccess(response));
     }

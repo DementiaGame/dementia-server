@@ -22,7 +22,7 @@ public class InitialGameQuestionController {
     }
 
     @PostMapping
-    public ResponseEntity<BaseResponse<List<InitialGameQuestionResponse>>> getRandomQuestionsByTopic(@RequestBody SelectGameTopicRequest request) {
+    public ResponseEntity<BaseResponse> getRandomQuestionsByTopic(@RequestBody SelectGameTopicRequest request) {
         List<InitialGameQuestionResponse> response = initialGameQuestionService.getRandomQuestionsByTopic(request);
         return ResponseEntity.ok(BaseResponse.ofSuccess(response));
     }

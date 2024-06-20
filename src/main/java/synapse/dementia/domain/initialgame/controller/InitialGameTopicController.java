@@ -23,14 +23,15 @@ public class InitialGameTopicController {
     }
 
     @GetMapping
-    public ResponseEntity<BaseResponse<List<InitialGameTopicResponse>>> getAllTopics() {
+    public ResponseEntity<BaseResponse> getAllTopics() {
         List<InitialGameTopicResponse> topics = gameTopicService.getAllTopics();
         return ResponseEntity.ok(BaseResponse.ofSuccess(topics));
     }
 
     @PostMapping
-    public ResponseEntity<BaseResponse<SelectedGameTopicResponse>> selectTopic(@RequestBody SelectGameTopicRequest request) {
+    public ResponseEntity<BaseResponse> selectTopic(@RequestBody SelectGameTopicRequest request) {
         SelectedGameTopicResponse response = gameTopicService.selectTopic(request);
         return ResponseEntity.ok(BaseResponse.ofSuccess(response));
     }
 }
+
