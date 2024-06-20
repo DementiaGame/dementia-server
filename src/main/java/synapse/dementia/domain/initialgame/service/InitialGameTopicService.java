@@ -16,16 +16,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class GameTopicService {
+public class InitialGameTopicService {
 
     private final ExcelDataRepository excelDataRepository;
     private final SelectedGameTopicRepository selectedGameTopicRepository;
     private final UsersRepository userRepository;
 
     @Autowired
-    public GameTopicService(ExcelDataRepository excelDataRepository,
-                            SelectedGameTopicRepository selectedGameTopicRepository,
-                            UsersRepository userRepository) {
+    public InitialGameTopicService(ExcelDataRepository excelDataRepository,
+                                   SelectedGameTopicRepository selectedGameTopicRepository,
+                                   UsersRepository userRepository) {
         this.excelDataRepository = excelDataRepository;
         this.selectedGameTopicRepository = selectedGameTopicRepository;
         this.userRepository = userRepository;
@@ -40,12 +40,12 @@ public class GameTopicService {
     }
 
     @Transactional
-    public SelectedGameTopicResponse selectTopic(SelectGameTopicRequest request) {
-        if (request.userId() == null) {
+    public SelectedGameTopicResponse selectTopic(Long userId, SelectGameTopicRequest request) {
+        if (userId == null) {
             throw new IllegalArgumentException("User ID must not be null");
         }
 
-        Users user = userRepository.findById(request.userId())
+        Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
 
         SelectedGameTopic selectedGameTopic = SelectedGameTopic.builder()
