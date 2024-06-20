@@ -50,6 +50,12 @@ public class ApiLogsHandler {
 		try {
 			request = ((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getRequest();
 			response = ((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getResponse();
+
+			if (response == null) {
+				logger.warn("HttpServletResponse is null, skipping logging");
+				return proceedingJoinPoint.proceed(proceedingJoinPoint.getArgs());
+			}
+
 			CustomHttpServletResponseWrapper responseWrapper = new CustomHttpServletResponseWrapper(response);
 
 			long start = System.currentTimeMillis();
@@ -58,6 +64,7 @@ public class ApiLogsHandler {
 			saveSuccessLog(request, responseWrapper, serverIp, start, end);
 			return result;
 		} catch (IllegalStateException e) {
+			logger.error("IllegalStateException encountered", e);
 			return proceedingJoinPoint.proceed(proceedingJoinPoint.getArgs());
 		}
 	}
