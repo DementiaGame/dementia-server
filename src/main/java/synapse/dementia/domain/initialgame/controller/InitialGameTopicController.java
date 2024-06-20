@@ -1,6 +1,7 @@
 package synapse.dementia.domain.initialgame.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import synapse.dementia.domain.initialgame.dto.request.SelectGameTopicRequest;
 import synapse.dementia.domain.initialgame.dto.response.InitialGameTopicResponse;
@@ -22,14 +23,14 @@ public class InitialGameTopicController {
     }
 
     @GetMapping
-    public BaseResponse<List<InitialGameTopicResponse>> getAllTopics() {
+    public ResponseEntity<BaseResponse<List<InitialGameTopicResponse>>> getAllTopics() {
         List<InitialGameTopicResponse> topics = gameTopicService.getAllTopics();
-        return BaseResponse.ofSuccess(topics);
+        return ResponseEntity.ok(BaseResponse.ofSuccess(topics));
     }
 
     @PostMapping
-    public BaseResponse<SelectedGameTopicResponse> selectTopic(@RequestBody SelectGameTopicRequest request) {
+    public ResponseEntity<BaseResponse<SelectedGameTopicResponse>> selectTopic(@RequestBody SelectGameTopicRequest request) {
         SelectedGameTopicResponse response = gameTopicService.selectTopic(request);
-        return BaseResponse.ofSuccess(response);
+        return ResponseEntity.ok(BaseResponse.ofSuccess(response));
     }
 }
