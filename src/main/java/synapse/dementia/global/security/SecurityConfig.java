@@ -98,7 +98,7 @@ public class SecurityConfig {
 				.authenticationEntryPoint(authenticationEntryPoint)
 				.accessDeniedHandler(accessDeniedHandler))
 			.logout(logout -> logout
-				.logoutRequestMatcher(new AntPathRequestMatcher("/auth/signOut", "POST"))
+				.logoutRequestMatcher(new AntPathRequestMatcher("/auth/signout", "POST"))
 				.invalidateHttpSession(true)
 				.deleteCookies("JSESSIONID")
 				.logoutSuccessHandler(((request, response, authentication) -> {
