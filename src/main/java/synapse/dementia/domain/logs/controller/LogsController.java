@@ -14,53 +14,56 @@ import synapse.dementia.domain.logs.domain.ApiErrorLogs;
 import synapse.dementia.domain.logs.domain.ApiSuccessLogs;
 import synapse.dementia.domain.logs.service.LogsService;
 import synapse.dementia.domain.users.domain.Users;
+import synapse.dementia.domain.users.dto.UsersDto;
+import synapse.dementia.domain.users.service.UsersService;
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/admin")
 public class LogsController {
 	private final LogsService logsService;
+	private final UsersService usersService;
 
 	@GetMapping()
 	public String getDashboard(Model model) {
-		// List<Users> users = usersRepository.findAll();
-		// model.addAttribute("users", users);
-		//
-		// List<ApiSuccessLogs> successLogs = logsService.findAllSuccessLogs().stream()
-		// 	.sorted((log1, log2) -> log2.getRequestTime().compareTo(log1.getRequestTime()))
-		// 	.collect(Collectors.toList());
-		// model.addAttribute("successLogs", successLogs);
-		//
-		// List<ApiErrorLogs> errorLogs = logsService.findAllErrorLogs().stream()
-		// 	.sorted((log1, log2) -> log2.getRequestTime().compareTo(log1.getRequestTime()))
-		// 	.collect(Collectors.toList());
-		// model.addAttribute("errorLogs", errorLogs);
+		List<UsersDto> users = usersService.findAllUsers();
+		model.addAttribute("users", users);
+
+		List<ApiSuccessLogs> successLogs = logsService.findAllSuccessLogs().stream()
+			.sorted((log1, log2) -> log2.getRequestTime().compareTo(log1.getRequestTime()))
+			.collect(Collectors.toList());
+		model.addAttribute("successLogs", successLogs);
+
+		List<ApiErrorLogs> errorLogs = logsService.findAllErrorLogs().stream()
+			.sorted((log1, log2) -> log2.getRequestTime().compareTo(log1.getRequestTime()))
+			.collect(Collectors.toList());
+		model.addAttribute("errorLogs", errorLogs);
 
 		return "admin/dashboard";
 	}
 
 	@GetMapping("/all-logs")
 	public String allLogs(Model model) {
-		// List<Users> users = usersRepository.findAll();
-		// model.addAttribute("users", users);
-		//
-		// List<ApiSuccessLogs> successLogs = logsService.findAllSuccessLogs().stream()
-		// 	.sorted((log1, log2) -> log2.getRequestTime().compareTo(log1.getRequestTime()))
-		// 	.collect(Collectors.toList());
-		// model.addAttribute("successLogs", successLogs);
-		//
-		// List<ApiErrorLogs> errorLogs = logsService.findAllErrorLogs().stream()
-		// 	.sorted((log1, log2) -> log2.getRequestTime().compareTo(log1.getRequestTime()))
-		// 	.collect(Collectors.toList());
-		// model.addAttribute("errorLogs", errorLogs);
+		List<UsersDto> users = usersService.findAllUsers();
+		model.addAttribute("users", users);
+
+		List<ApiSuccessLogs> successLogs = logsService.findAllSuccessLogs().stream()
+			.sorted((log1, log2) -> log2.getRequestTime().compareTo(log1.getRequestTime()))
+			.collect(Collectors.toList());
+		model.addAttribute("successLogs", successLogs);
+
+		List<ApiErrorLogs> errorLogs = logsService.findAllErrorLogs().stream()
+			.sorted((log1, log2) -> log2.getRequestTime().compareTo(log1.getRequestTime()))
+			.collect(Collectors.toList());
+		model.addAttribute("errorLogs", errorLogs);
 
 		return "admin/all-logs";
 	}
 
 	@GetMapping("/users")
 	public String getAllUsersLogs(Model model) {
-		// List<Users> users = usersRepository.findAll();
-		// model.addAttribute("users", users);
+		List<UsersDto> users = usersService.findAllUsers();
+		model.addAttribute("users", users);
 		return "admin/users";
 	}
 
