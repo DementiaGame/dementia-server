@@ -8,7 +8,7 @@ import synapse.dementia.domain.initialgame.dto.request.SelectGameTopicRequest;
 import synapse.dementia.domain.initialgame.dto.response.InitialGameTopicResponse;
 import synapse.dementia.domain.initialgame.dto.response.SelectedGameTopicResponse;
 import synapse.dementia.domain.initialgame.repository.SelectedGameTopicRepository;
-import synapse.dementia.domain.initialgame.repository.UserRepository;
+import synapse.dementia.domain.users.repository.UsersRepository;
 import synapse.dementia.global.excel.repository.ExcelDataRepository;
 import synapse.dementia.domain.users.domain.Users;
 
@@ -20,12 +20,12 @@ public class GameTopicService {
 
     private final ExcelDataRepository excelDataRepository;
     private final SelectedGameTopicRepository selectedGameTopicRepository;
-    private final UserRepository userRepository;
+    private final UsersRepository userRepository;
 
     @Autowired
     public GameTopicService(ExcelDataRepository excelDataRepository,
                             SelectedGameTopicRepository selectedGameTopicRepository,
-                            UserRepository userRepository) {
+                            UsersRepository userRepository) {
         this.excelDataRepository = excelDataRepository;
         this.selectedGameTopicRepository = selectedGameTopicRepository;
         this.userRepository = userRepository;

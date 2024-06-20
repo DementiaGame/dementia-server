@@ -9,18 +9,18 @@ import synapse.dementia.domain.initialgame.dto.request.InitialGameResultRequest;
 import synapse.dementia.domain.initialgame.dto.response.InitialGameResultResponse;
 import synapse.dementia.domain.initialgame.repository.InitialGameResultRepository;
 import synapse.dementia.domain.initialgame.repository.InitialGameQuestionRepository;
-import synapse.dementia.domain.initialgame.repository.UserRepository;
 import synapse.dementia.domain.users.domain.Users;
+import synapse.dementia.domain.users.repository.UsersRepository;
 
 @Service
 public class InitialGameResultService {
 
     private final InitialGameResultRepository initialGameResultRepository;
-    private final UserRepository userRepository;
+    private final UsersRepository userRepository;
     private final InitialGameQuestionRepository initialGameQuestionRepository;
 
     @Autowired
-    public InitialGameResultService(InitialGameResultRepository initialGameResultRepository, UserRepository userRepository, InitialGameQuestionRepository initialGameQuestionRepository) {
+    public InitialGameResultService(InitialGameResultRepository initialGameResultRepository, UsersRepository userRepository, InitialGameQuestionRepository initialGameQuestionRepository) {
         this.initialGameResultRepository = initialGameResultRepository;
         this.userRepository = userRepository;
         this.initialGameQuestionRepository = initialGameQuestionRepository;
