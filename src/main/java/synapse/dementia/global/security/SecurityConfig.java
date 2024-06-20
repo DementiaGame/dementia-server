@@ -19,8 +19,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.context.DelegatingSecurityContextRepository;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration
 public class SecurityConfig {
@@ -93,7 +96,15 @@ public class SecurityConfig {
 			)
 			.exceptionHandling(config -> config
 				.authenticationEntryPoint(authenticationEntryPoint)
-				.accessDeniedHandler(accessDeniedHandler));
+				.accessDeniedHandler(accessDeniedHandler))
+			.logout(logout -> logout
+				.logoutRequestMatcher(new AntPathRequestMatcher("/auth/signOut", "POST"))
+				.invalidateHttpSession(true)
+				.deleteCookies("JSESSIONID")
+				.logoutSuccessHandler(((request, response, authentication) -> {
+					response.setStatus(HttpServletResponse.SC_OK);
+				})))
+		;
 
 		return http.build();
 	}
