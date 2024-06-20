@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import synapse.dementia.domain.initialgame.dto.request.SelectGameTopicRequest;
 import synapse.dementia.domain.initialgame.dto.response.InitialGameQuestionResponse;
 import synapse.dementia.domain.initialgame.service.InitialGameQuestionService;
+import synapse.dementia.global.base.BaseResponse;
 
 import java.util.List;
 
@@ -21,8 +22,8 @@ public class InitialGameQuestionController {
     }
 
     @PostMapping
-    public ResponseEntity<List<InitialGameQuestionResponse>> getRandomQuestionsByTopic(@RequestBody SelectGameTopicRequest request) {
+    public ResponseEntity<BaseResponse> getRandomQuestionsByTopic(@RequestBody SelectGameTopicRequest request) {
         List<InitialGameQuestionResponse> response = initialGameQuestionService.getRandomQuestionsByTopic(request);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(BaseResponse.ofSuccess(response));
     }
 }

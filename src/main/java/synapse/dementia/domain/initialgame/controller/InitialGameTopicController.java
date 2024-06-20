@@ -7,6 +7,7 @@ import synapse.dementia.domain.initialgame.dto.request.SelectGameTopicRequest;
 import synapse.dementia.domain.initialgame.dto.response.InitialGameTopicResponse;
 import synapse.dementia.domain.initialgame.dto.response.SelectedGameTopicResponse;
 import synapse.dementia.domain.initialgame.service.GameTopicService;
+import synapse.dementia.global.base.BaseResponse;
 
 import java.util.List;
 
@@ -22,14 +23,15 @@ public class InitialGameTopicController {
     }
 
     @GetMapping
-    public ResponseEntity<List<InitialGameTopicResponse>> getAllTopics() {
+    public ResponseEntity<BaseResponse> getAllTopics() {
         List<InitialGameTopicResponse> topics = gameTopicService.getAllTopics();
-        return ResponseEntity.ok(topics);
+        return ResponseEntity.ok(BaseResponse.ofSuccess(topics));
     }
 
     @PostMapping
-    public ResponseEntity<SelectedGameTopicResponse> selectTopic(@RequestBody SelectGameTopicRequest request) {
+    public ResponseEntity<BaseResponse> selectTopic(@RequestBody SelectGameTopicRequest request) {
         SelectedGameTopicResponse response = gameTopicService.selectTopic(request);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(BaseResponse.ofSuccess(response));
     }
 }
+
