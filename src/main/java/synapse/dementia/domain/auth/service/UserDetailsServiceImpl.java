@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import synapse.dementia.domain.auth.domain.CustomUserDetails;
 import synapse.dementia.domain.users.domain.Users;
 import synapse.dementia.domain.users.repository.UsersRepository;
+import synapse.dementia.global.exception.ErrorResult;
+import synapse.dementia.global.exception.NotFoundException;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -27,7 +29,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String nickName) throws UsernameNotFoundException {
 		Optional<Users> user = usersRepository.findByNickName(nickName);
-		user.orElseThrow(() -> new UsernameNotFoundException("not found user:" + nickName));
+		user.orElseThrow(() -> new NotFoundException(ErrorResult.USER_NOT_EXIST_BAD_REQUEST));
 
 		CustomUserDetails customUserDetails = new CustomUserDetails(user.get());
 
