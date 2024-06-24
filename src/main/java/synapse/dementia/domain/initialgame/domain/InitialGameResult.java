@@ -35,7 +35,7 @@ public class InitialGameResult extends BaseEntity {
     @Column(name = "game_score", nullable = false)
     private Integer gameScore;
 
-    @Column(name = "gameScore", nullable = false)
+    @Column(name = "hearts", nullable = false)
     private Integer hearts;
 
     @Builder

@@ -44,7 +44,7 @@ public class InitialGameQuestion extends BaseEntity {
     @Column(name = "correct", nullable = false)
     private Boolean correct = false; // 기본값 설정
 
-    @Column(name = "gameScore", nullable = false)
+    @Column(name = "game_score", nullable = false)
     private Integer gameScore = 0; // 기본값 설정
 
     @Builder
