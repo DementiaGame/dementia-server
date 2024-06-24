@@ -1,15 +1,22 @@
 package synapse.dementia.domain.users.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import synapse.dementia.domain.users.domain.CustomUserDetails;
 import synapse.dementia.domain.users.domain.Users;
 import synapse.dementia.domain.users.dto.UsersDto;
 import synapse.dementia.domain.users.dto.request.UsersSignUpReq;
+import synapse.dementia.domain.users.dto.response.UsersInfoRes;
 import synapse.dementia.domain.users.dto.response.UsersSignUpRes;
 import synapse.dementia.domain.users.repository.UsersRepository;
 import synapse.dementia.global.exception.BadRequestException;
@@ -59,5 +66,25 @@ public class UsersService {
 				user.getRole()
 			))
 			.collect(Collectors.toList());
+	}
+
+	@Transactional
+	public UsersInfoRes findUser() {
+		// 내부 서버 세션에서 authentication 객체 로드
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		CustomUserDetails userDetails = (CustomUserDetails)authentication.getPrincipal();
+
+		Optional<Users> user = usersRepository.findById(userDetails.getUsersIdx());
+
+		return new UsersInfoRes(
+			user.get().getUsersIdx(),
+			user.get().getBirthYear(),
+			user.get().getGender(),
+			user.get().getNickName(),
+			user.get().getDeleted(),
+			user.get().getFaceData(),
+			user.get().getProfileImage(),
+			user.get().getRole()
+		);
 	}
 }
