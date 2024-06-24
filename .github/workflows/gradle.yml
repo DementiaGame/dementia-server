@@ -87,4 +87,4 @@ jobs:
           sudo docker pull ${{secrets.DOCKER_USERNAME}}/dementia
       - name: Docker run
         run: |
-          sudo docker run -d --name way --rm -p 8080:8080 ${{secrets.DOCKER_USERNAME}}/dementia
+          sudo docker run -d --name dementia --rm -p 8080:8080 ${{secrets.DOCKER_USERNAME}}/dementia
