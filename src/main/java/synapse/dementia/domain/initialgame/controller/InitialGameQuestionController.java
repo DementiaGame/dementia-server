@@ -21,9 +21,9 @@ public class InitialGameQuestionController {
         this.initialGameQuestionService = initialGameQuestionService;
     }
 
-    @PostMapping
-    public ResponseEntity<BaseResponse> getRandomQuestionsByTopic(@RequestBody SelectGameTopicRequest request) {
-        List<InitialGameQuestionResponse> response = initialGameQuestionService.getRandomQuestionsByTopic(request);
+    @PostMapping("/{userIdx}")
+    public ResponseEntity<BaseResponse> getRandomQuestionsByTopic(@PathVariable Long userIdx, @RequestBody SelectGameTopicRequest request) {
+        List<InitialGameQuestionResponse> response = initialGameQuestionService.getRandomQuestionsByTopic(userIdx, request);
         return ResponseEntity.ok(BaseResponse.ofSuccess(response));
     }
 }

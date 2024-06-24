@@ -7,56 +7,60 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import synapse.dementia.domain.users.domain.Users;
 import synapse.dementia.global.domain.BaseEntity;
-import synapse.dementia.global.excel.model.ExcelData;
 
 @Entity
-@Table(name="INITIAL_GAME_RESULTS")
+@Table(name = "INITIAL_GAME_RESULTS")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class InitialGameResult extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="result_id")
+    @Column(name = "result_id")
     private Long resultIdx;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private Users user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="excel_data_id", nullable = false)
-    private ExcelData excelData;
+    @JoinColumn(name = "question_id", nullable = false)
+    private InitialGameQuestion question;
 
-    @Column(name="hint_image", nullable = true)
+    @Column(name = "hint_image", nullable = true)
     private String hintImage;
 
-    @Column(name="correct", nullable = false)
+    @Column(name = "correct", nullable = false)
     private Boolean correct;
 
-    @Column(name="game_score", nullable = false)
+    @Column(name = "game_score", nullable = false)
     private Integer gameScore;
 
-    @Column(name="hearts", nullable = false)
+    @Column(name = "hearts", nullable = false)
     private Integer hearts;
 
     @Builder
-    public InitialGameResult(Users user, ExcelData excelData, String hintImage, Boolean correct, Integer gameScore, Integer hearts) {
+    public InitialGameResult(Users user, InitialGameQuestion question, String hintImage, Boolean correct, Integer gameScore, Integer hearts) {
         this.user = user;
-        this.excelData = excelData;
+        this.question = question;
         this.hintImage = hintImage;
         this.correct = correct;
         this.gameScore = gameScore;
         this.hearts = hearts;
     }
 
-    public void markAsCorrect() {
-        this.correct = true;
+    public void incrementGameScore() {
         this.gameScore += 1;
+    }
+
+    public void incrementHearts() {
         this.hearts += 1;
     }
 
-    public void markAsIncorrect() {
-        this.correct = false;
+    public void decrementHearts() {
         this.hearts -= 1;
+    }
+
+    public void setCorrect(boolean correct) {
+        this.correct = correct;
     }
 }
