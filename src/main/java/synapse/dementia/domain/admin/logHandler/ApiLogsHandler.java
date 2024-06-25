@@ -17,6 +17,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import synapse.dementia.domain.admin.logs.service.LogsService;
 
+import static synapse.dementia.domain.admin.logs.constant.LogsConstants.*;
+
 @Component
 @Aspect
 @RequiredArgsConstructor
