@@ -75,6 +75,8 @@
 
         .table tbody tr td {
             color: #ffffff;
+            word-wrap: break-word;
+            white-space: normal;
         }
 
         .section-title {
@@ -84,19 +86,50 @@
             color: #ffffff;
         }
 
-        /* Modal text color */
         .modal-content {
             color: #000000;
         }
 
         .card-container {
-            margin-top: 2rem; /* 상단 공백 추가 */
-            margin-bottom: 2rem; /* 하단 공백 추가 */
+            margin-top: 2rem;
+            margin-bottom: 2rem;
         }
 
         #main-content {
             overflow-y: auto;
-            padding-bottom: 2rem; /* 하단 공백 추가 */
+            padding-bottom: 2rem;
+        }
+
+        .text-box {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            max-width: 200px; /* 적절한 너비 설정 */
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .table th, .table td {
+            vertical-align: middle;
+        }
+
+        .table {
+            table-layout: fixed;
+        }
+
+        .table th, .table td {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .error-message {
+            max-width: 200px; /* 너비를 적절히 설정 */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
     </style>
 </head>
@@ -108,14 +141,12 @@
                 <h5 class="text-center text-white mb-4">Synapse Dashboard</h5>
                 <a href="#" class="nav-link active" data-target="dashboard" data-url="/admin/all-logs">Dashboard</a>
                 <a href="#" class="nav-link" data-target="users" data-url="/admin/users">Users</a>
-                <a href="#" class="nav-link" data-target="api-success-logs" data-url="/admin/success-logs">API SUCCESS
-                    LOGS</a>
+                <a href="#" class="nav-link" data-target="api-success-logs" data-url="/admin/success-logs">API SUCCESS LOGS</a>
                 <a href="#" class="nav-link" data-target="api-fail-logs" data-url="/admin/error-logs">API FAIL LOGS</a>
             </div>
         </nav>
         <main role="main" class="col-md-10 ml-sm-auto px-4">
             <div id="main-content" style="overflow-y: auto; height: calc(100vh - 100px);">
-                <!-- Users section -->
                 <div class="card-container">
                     <div class="card">
                         <div class="card-body">
@@ -142,22 +173,16 @@
                                     <td th:text="${user.profileImage}"></td>
                                     <td th:text="${user.role}"></td>
                                     <td>
-                                        <a th:href="@{'/admin/users/edit/' + ${user.usersIdx}}"
-                                           class="btn btn-primary btn-sm">수정</a>
+                                        <a th:href="@{'/admin/users/edit/' + ${user.usersIdx}}" class="btn btn-primary btn-sm">수정</a>
                                     </td>
                                     <td>
-                                        <button class="btn btn-danger btn-sm" data-toggle="modal"
-                                                th:data-target="'#deleteModal' + ${user.usersIdx}">삭제
-                                        </button>
-                                        <!-- Delete Modal -->
-                                        <div class="modal fade" th:id="'deleteModal' + ${user.usersIdx}" tabindex="-1"
-                                             role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <button class="btn btn-danger btn-sm" data-toggle="modal" th:data-target="'#deleteModal' + ${user.usersIdx}">삭제</button>
+                                        <div class="modal fade" th:id="'deleteModal' + ${user.usersIdx}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                             <div class="modal-dialog" role="document">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
                                                         <h5 class="modal-title" id="exampleModalLabel">삭제 확인</h5>
-                                                        <button type="button" class="close" data-dismiss="modal"
-                                                                aria-label="Close">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                             <span aria-hidden="true">&times;</span>
                                                         </button>
                                                     </div>
@@ -165,11 +190,8 @@
                                                         정말로 삭제하시겠습니까?
                                                     </div>
                                                     <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary"
-                                                                data-dismiss="modal">취소
-                                                        </button>
-                                                        <form th:action="@{'/admin/users/delete/' + ${user.usersIdx}}"
-                                                              method="post" style="display:inline;">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+                                                        <form th:action="@{'/admin/users/delete/' + ${user.usersIdx}}" method="post" style="display:inline;">
                                                             <input type="hidden" name="_method" value="delete"/>
                                                             <button type="submit" class="btn btn-danger">삭제</button>
                                                         </form>
@@ -177,7 +199,6 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <!-- End of Delete Modal -->
                                     </td>
                                 </tr>
                                 </tbody>
@@ -215,32 +236,23 @@
                                 </tr>
                                 </tbody>
                             </table>
-
-                            <!-- Pagination for API Success Logs -->
                             <nav aria-label="Page navigation">
                                 <ul class="pagination">
-                                    <li class="page-item"
-                                        th:classappend="${successLogsPage.hasPrevious()} ? '': 'disabled'">
-                                        <a class="page-link" th:href="@{'/admin?page=' + ${successLogsPage.number - 1}}"
-                                           aria-label="Previous">
+                                    <li class="page-item" th:classappend="${successLogsPage.hasPrevious()} ? '': 'disabled'">
+                                        <a class="page-link" th:href="@{'/admin?page=' + ${successLogsPage.number - 1}}" aria-label="Previous">
                                             <span aria-hidden="true">&laquo;</span>
                                         </a>
                                     </li>
-                                    <li class="page-item"
-                                        th:each="i : ${#numbers.sequence(1, successLogsPage.totalPages)}"
-                                        th:classappend="${successLogsPage.number + 1 == i} ? 'active'">
+                                    <li class="page-item" th:each="i : ${#numbers.sequence(1, successLogsPage.totalPages)}" th:classappend="${successLogsPage.number + 1 == i} ? 'active'">
                                         <a class="page-link" th:href="@{'/admin?page=' + ${i - 1}}" th:text="${i}">1</a>
                                     </li>
-                                    <li class="page-item"
-                                        th:classappend="${successLogsPage.hasNext()} ? '': 'disabled'">
-                                        <a class="page-link" th:href="@{'/admin?page=' + ${successLogsPage.number + 1}}"
-                                           aria-label="Next">
+                                    <li class="page-item" th:classappend="${successLogsPage.hasNext()} ? '': 'disabled'">
+                                        <a class="page-link" th:href="@{'/admin?page=' + ${successLogsPage.number + 1}}" aria-label="Next">
                                             <span aria-hidden="true">&raquo;</span>
                                         </a>
                                     </li>
                                 </ul>
                             </nav>
-
                         </div>
                     </div>
                 </div>
@@ -248,7 +260,7 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="section-title">API Error Logs</div>
-                            <table class="table table-striped mt-4">
+                            <table class="table table-striped">
                                 <thead class="thead-dark">
                                 <tr>
                                     <th>Server IP</th>
@@ -272,7 +284,7 @@
                                     <td th:text="${#temporals.format(log.requestTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
                                     <td th:text="${#temporals.format(log.responseTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
                                     <td th:text="${log.connectionTime}"></td>
-                                    <td th:text="${log.errorMessage}"></td>
+                                    <td class="text-box" th:text="${log.errorMessage}"></td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -318,7 +330,7 @@
             var target = $(this).data('target');
             var url = $(this).data('url');
 
-            console.log("Requesting URL: " + url); // 콘솔 로그 추가
+            console.log("Requesting URL: " + url);
 
             $('.nav-link').removeClass('active');
             $(this).addClass('active');
@@ -327,11 +339,11 @@
                 url: url,
                 method: 'GET',
                 success: function (data) {
-                    console.log("Request succeeded."); // 콘솔 로그 추가
+                    console.log("Request succeeded.");
                     $('#main-content').html(data);
                 },
                 error: function (xhr, status, error) {
-                    console.log("Request failed. Status: " + status + ", Error: " + error); // 콘솔 로그 추가
+                    console.log("Request failed. Status: " + status + ", Error: " + error);
                     $('#main-content').html('<div class="alert alert-danger">Failed to load content.</div>');
                 }
             });

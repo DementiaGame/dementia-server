@@ -46,13 +46,27 @@
         }
         .table tbody tr td {
             color: #ffffff;
+            word-wrap: break-word;
+            white-space: normal;
+        }
+        .text-box {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            max-width: 200px; /* 적절한 너비 설정 */
+        }
+        .table-responsive {
+            overflow-x: auto;
+        }
+        .table th, .table td {
+            vertical-align: middle;
         }
     </style>
 </head>
 <body>
 <div class="container mt-5">
     <div class="card mt-4">
-        <div class="card-body">
+        <div class="card-body table-responsive">
             <table class="table table-striped">
                 <thead class="thead-dark">
                 <tr>
@@ -77,7 +91,7 @@
                     <td th:text="${#temporals.format(log.requestTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
                     <td th:text="${#temporals.format(log.responseTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
                     <td th:text="${log.connectionTime}"></td>
-                    <td th:text="${log.errorMessage}"></td>
+                    <td class="text-box" th:text="${log.errorMessage}"></td>
                 </tr>
                 </tbody>
             </table>
