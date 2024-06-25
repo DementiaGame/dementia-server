@@ -19,7 +19,7 @@ import synapse.dementia.domain.admin.logs.domain.ApiErrorLogs;
 import synapse.dementia.domain.admin.logs.domain.ApiSuccessLogs;
 import synapse.dementia.domain.admin.logs.repository.ErrorLogsRepository;
 import synapse.dementia.domain.admin.logs.repository.SuccessLogsRepository;
-import synapse.dementia.domain.admin.logHandler.CustomHttpServletResponseWrapper;
+import synapse.dementia.domain.admin.config.logs.CustomHttpServletResponseWrapper;
 
 @Service
 @RequiredArgsConstructor
@@ -31,13 +31,13 @@ public class LogsServiceImpl implements LogsService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<ApiErrorLogs> findAllErrorLogs() {
-		return errorLogsRepository.findAll();
+		return errorLogsRepository.findApiErrorLogsDesc();
 	}
 
 	@Override
 	@Transactional(readOnly = true)
 	public List<ApiSuccessLogs> findAllSuccessLogs() {
-		return successLogsRepository.findAll();
+		return successLogsRepository.findApiSuccessLogsDesc();
 	}
 
 	@Override
