@@ -2,10 +2,14 @@ package synapse.dementia.domain.admin.dashboard.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import lombok.RequiredArgsConstructor;
 import synapse.dementia.domain.admin.logs.domain.ApiErrorLogs;
@@ -22,15 +26,23 @@ public class DashBoardController {
 	private final LogsService logsService;
 
 	@GetMapping()
-	public String getDashboard(Model model) {
+	public String getDashboard(
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "20") int size,
+		Model model
+	) {
 		List<MemberDto> users = memberService.findAllUsers();
 		model.addAttribute("users", users);
 
-		List<ApiSuccessLogs> successLogs = logsService.findAllSuccessLogs();
-		model.addAttribute("successLogs", successLogs);
+		Pageable pageable = PageRequest.of(page, size);
 
-		List<ApiErrorLogs> errorLogs = logsService.findAllErrorLogs();
-		model.addAttribute("errorLogs", errorLogs);
+		Page<ApiSuccessLogs> successLogsPage = logsService.findAllSuccessLogs(pageable);
+		model.addAttribute("successLogs", successLogsPage.getContent());
+		model.addAttribute("successLogsPage", successLogsPage);
+
+		Page<ApiErrorLogs> errorLogsPage = logsService.findAllErrorLogs(pageable);
+		model.addAttribute("errorLogs", errorLogsPage.getContent());
+		model.addAttribute("errorLogsPage", errorLogsPage);
 
 		return "admin/dashboard";
 	}
