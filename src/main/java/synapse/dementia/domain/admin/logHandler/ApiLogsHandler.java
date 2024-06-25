@@ -32,7 +32,7 @@ public class ApiLogsHandler {
 		return new RequestContextListener();
 	}
 
-	@Pointcut("within(synapse.dementia.domain..*) && !execution(* synapse.dementia.domain.admin.logs.service.LogsServiceImpl.getServerIp(..)) && !execution(* synapse.dementia.domain.admin.logs.service.LogsServiceImpl.saveSuccessLogs(..)) && !execution(* synapse.dementia.domain.admin.logs.service.LogsServiceImpl.saveErrorLogs(..))")
+	@Pointcut("within(synapse.dementia.domain.users..*)")
 	public void onRequest() {
 	}
 
