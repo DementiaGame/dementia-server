@@ -1,4 +1,4 @@
-package synapse.dementia.domain.admin.logHandler;
+package synapse.dementia.domain.admin.config.logs;
 
 import java.io.IOException;
 

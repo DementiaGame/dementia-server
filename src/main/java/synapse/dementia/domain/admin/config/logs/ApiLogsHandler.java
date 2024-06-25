@@ -1,4 +1,4 @@
-package synapse.dementia.domain.admin.logHandler;
+package synapse.dementia.domain.admin.config.logs;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -36,7 +36,7 @@ public class ApiLogsHandler {
 	public void onRequest() {
 	}
 
-	@Around("synapse.dementia.domain.admin.logHandler.ApiLogsHandler.onRequest()")
+	@Around("synapse.dementia.domain.admin.config.logs.ApiLogsHandler.onRequest()")
 	public Object requestLogging(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
 		HttpServletRequest request = null;
 		HttpServletResponse response = null;
