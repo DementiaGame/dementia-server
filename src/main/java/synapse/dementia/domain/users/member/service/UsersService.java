@@ -1,14 +1,10 @@
 package synapse.dementia.domain.users.member.service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import synapse.dementia.domain.users.member.domain.Users;
-import synapse.dementia.domain.users.member.dto.UsersDto;
 import synapse.dementia.domain.users.member.dto.request.UsersSignUpReq;
 import synapse.dementia.domain.users.member.dto.response.UsersSignUpRes;
 import synapse.dementia.domain.users.member.repository.UsersRepository;
@@ -41,23 +37,5 @@ public class UsersService {
 		Users user = dto.toEntity(bCryptPasswordEncoder.encode(dto.password()));
 		usersRepository.save(user);
 		return new UsersSignUpRes(user.getNickName());
-	}
-
-	@Transactional(readOnly = true)
-	public List<UsersDto> findAllUsers() {
-		List<Users> users = usersRepository.findAll();
-		return users.stream()
-			.map(user -> new UsersDto(
-				user.getUsersIdx(),
-				user.getBirthYear(),
-				user.getGender(),
-				user.getNickName(),
-				user.getPassword(),
-				user.getDeleted(),
-				user.getFaceData(),
-				user.getProfileImage(),
-				user.getRole()
-			))
-			.collect(Collectors.toList());
 	}
 }

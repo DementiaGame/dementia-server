@@ -6,7 +6,7 @@ import java.util.Optional;
 import jakarta.servlet.http.HttpServletRequest;
 import synapse.dementia.domain.admin.logs.domain.ApiErrorLogs;
 import synapse.dementia.domain.admin.logs.domain.ApiSuccessLogs;
-import synapse.dementia.domain.admin.logHandler.CustomHttpServletResponseWrapper;
+import synapse.dementia.domain.admin.config.logs.CustomHttpServletResponseWrapper;
 
 public interface LogsService {
 	List<ApiErrorLogs> findAllErrorLogs();

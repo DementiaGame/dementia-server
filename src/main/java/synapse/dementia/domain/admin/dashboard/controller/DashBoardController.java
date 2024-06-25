@@ -1,4 +1,4 @@
-package synapse.dementia.domain.admin.logs.controller;
+package synapse.dementia.domain.admin.dashboard.controller;
 
 import java.util.List;
 
@@ -9,20 +9,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import lombok.RequiredArgsConstructor;
 import synapse.dementia.domain.admin.logs.domain.ApiErrorLogs;
-import synapse.dementia.domain.admin.logs.service.LogsService;
 import synapse.dementia.domain.admin.logs.domain.ApiSuccessLogs;
+import synapse.dementia.domain.admin.logs.service.LogsService;
 import synapse.dementia.domain.admin.member.dto.MemberDto;
 import synapse.dementia.domain.admin.member.service.MemberService;
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/admin")
-public class LogsController {
-	private final LogsService logsService;
+public class DashBoardController {
 	private final MemberService memberService;
+	private final LogsService logsService;
 
-	@GetMapping("/all-logs")
-	public String allLogs(Model model) {
+	@GetMapping()
+	public String getDashboard(Model model) {
 		List<MemberDto> users = memberService.findAllUsers();
 		model.addAttribute("users", users);
 
@@ -32,22 +32,6 @@ public class LogsController {
 		List<ApiErrorLogs> errorLogs = logsService.findAllErrorLogs();
 		model.addAttribute("errorLogs", errorLogs);
 
-		return "admin/all-logs";
-	}
-
-	@GetMapping("/success-logs")
-	public String getAllSuccessLogs(Model model) {
-		List<ApiSuccessLogs> successLogs = logsService.findAllSuccessLogs();
-
-		model.addAttribute("successLogs", successLogs);
-		return "admin/success-logs";
-	}
-
-	@GetMapping("/error-logs")
-	public String getAllFailLogs(Model model) {
-		List<ApiErrorLogs> errorLogs = logsService.findAllErrorLogs();
-
-		model.addAttribute("errorLogs", errorLogs);
-		return "admin/error-logs";
+		return "admin/dashboard";
 	}
 }
