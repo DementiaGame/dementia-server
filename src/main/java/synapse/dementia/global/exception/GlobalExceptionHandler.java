@@ -19,7 +19,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import synapse.dementia.domain.logs.service.LogsService;
+import synapse.dementia.domain.admin.logs.service.LogsService;
 
 @Slf4j
 @RestControllerAdvice
