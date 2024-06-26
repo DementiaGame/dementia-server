@@ -44,7 +44,7 @@ public class Users extends BaseEntity {
 	@Column(name = "deleted", nullable = false)
 	private Boolean deleted = false;
 
-	@Column(name = "face_date", nullable = true, columnDefinition = "TEXT")
+	@Column(name = "face_data", nullable = true, columnDefinition = "TEXT")
 	@Lob
 	private String faceData;
 

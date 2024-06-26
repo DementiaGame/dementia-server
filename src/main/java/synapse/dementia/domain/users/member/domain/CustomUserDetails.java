@@ -12,17 +12,11 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
-@Entity
 public class CustomUserDetails implements UserDetails {
 
-	@Id
 	private Long usersIdx;
-	@Column
 	private String nickName;
-	@Column
 	private String password;
-
-	@Column
 	private Role role;
 
     public CustomUserDetails() {
@@ -35,6 +29,10 @@ public class CustomUserDetails implements UserDetails {
 		roles.add(new SimpleGrantedAuthority(role.name()));
 		return roles;
 		//return List.of();
+	}
+
+	public Long getUsersIdx() {
+		return usersIdx;
 	}
 
 	@Override

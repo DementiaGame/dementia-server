@@ -1,4 +1,4 @@
-package synapse.dementia.global.config.security;
+package synapse.dementia.global.config.security.exception;
 
 import java.io.IOException;
 
@@ -12,9 +12,13 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
+	// 권한이 없는 경우 수행
 	@Override
 	public void handle(HttpServletRequest request, HttpServletResponse response,
 		AccessDeniedException accessDeniedException) throws IOException, ServletException {
-		response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+		//response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+		response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+		response.setContentType("application/json;charset=UTF-8");
+		response.getWriter().write("USER_FORBIDDEN_REQUEST");
 	}
 }

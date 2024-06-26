@@ -1,4 +1,4 @@
-package synapse.dementia.global.config.security;
+package synapse.dementia.global.config.security.customFilter;
 
 import java.io.IOException;
 
@@ -22,7 +22,7 @@ public class CustomAuthenticationFilter extends AbstractAuthenticationProcessing
 	private ObjectMapper objectMapper = new ObjectMapper();
 
 	public CustomAuthenticationFilter() {
-		super(new AntPathRequestMatcher("/auth/signIn", "POST"));
+		super(new AntPathRequestMatcher("/auth/signin", "POST"));
 	}
 
 	@Override

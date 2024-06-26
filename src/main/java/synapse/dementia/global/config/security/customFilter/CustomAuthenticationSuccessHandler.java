@@ -1,11 +1,8 @@
-package synapse.dementia.global.config.security;
+package synapse.dementia.global.config.security.customFilter;
 
 import java.io.IOException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -16,11 +13,12 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import synapse.dementia.domain.users.member.domain.CustomUserDetails;
+import synapse.dementia.domain.users.member.dto.response.UsersSignInRes;
 
 @Component
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
-	private static final Logger log = LoggerFactory.getLogger(CustomAuthenticationSuccessHandler.class);
+	//private static final Logger log = LoggerFactory.getLogger(CustomAuthenticationSuccessHandler.class);
 	private ObjectMapper objectMapper = new ObjectMapper();
 
 	@Override
@@ -29,9 +27,13 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
 		CustomUserDetails user = (CustomUserDetails)authentication.getPrincipal();
 
-		response.setStatus(HttpStatus.OK.value());
-		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+		UsersSignInRes usersSignInRes = new UsersSignInRes(user.getUsersIdx(), user.getUsername(), user.getAuthorities());
 
-		objectMapper.writeValue(response.getWriter(), user);
+		response.setStatus(HttpStatus.OK.value());
+		//response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+		response.setContentType("application/json;charset=UTF-8");
+		response.setCharacterEncoding("UTF-8");
+
+		objectMapper.writeValue(response.getWriter(), usersSignInRes);
 	}
 }
