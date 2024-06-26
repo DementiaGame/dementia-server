@@ -81,24 +81,28 @@ public class SecurityConfig {
 					.FrameOptionsConfig::sameOrigin)
 			)
 			.authorizeHttpRequests(authorize -> authorize
-				.requestMatchers("/", "/users/signup", "/auth/signin", "/admin/**").permitAll()
+				.requestMatchers("/", "/users/signup", "/users/signin", "/admin/**").permitAll()
 				// .requestMatchers("/admin/**").hasRole(Role.ROLE_ADMIN.name())
 				.anyRequest().authenticated())
-			.addFilterBefore(
-				ajaxAuthenticationFilter(),
-				UsernamePasswordAuthenticationFilter.class)
+			// authentication Manager를 controller에서 호출
+			// .addFilterBefore(
+			// 	ajaxAuthenticationFilter(),
+			// 	UsernamePasswordAuthenticationFilter.class)
+			// 세션 관리
 			.sessionManagement(session -> session
 					.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-					.sessionFixation((sessionFixation) -> sessionFixation.newSession())
+					.sessionFixation((sessionFixation) -> sessionFixation.newSession()) // 로그인 시 세션 새로 생성
 					.maximumSessions(1)
 					.maxSessionsPreventsLogin(true)
 				//.sessionRegistry()
 			)
+			// 예외처리
 			.exceptionHandling(config -> config
 				.authenticationEntryPoint(authenticationEntryPoint)
 				.accessDeniedHandler(accessDeniedHandler))
+			// 로그아웃
 			.logout(logout -> logout
-				.logoutRequestMatcher(new AntPathRequestMatcher("/auth/signout", "POST"))
+				.logoutRequestMatcher(new AntPathRequestMatcher("/users/signout", "POST"))
 				.invalidateHttpSession(true)
 				.deleteCookies("JSESSIONID")
 				.logoutSuccessHandler(((request, response, authentication) -> {
@@ -121,6 +125,7 @@ public class SecurityConfig {
 	// 	return new ProviderManager(authenticationProvider);
 	// }
 
+	// 필터 단에서 인증 처리 시 필요
 	@Bean
 	public CustomAuthenticationFilter ajaxAuthenticationFilter() throws Exception {
 		CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter();

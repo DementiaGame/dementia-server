@@ -6,8 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,24 +17,30 @@ import synapse.dementia.domain.users.domain.CustomUserDetails;
 import synapse.dementia.domain.users.domain.Users;
 import synapse.dementia.domain.users.dto.UsersDto;
 import synapse.dementia.domain.users.dto.request.UsersInfoUpdateReq;
+import synapse.dementia.domain.users.dto.request.UsersSignInReq;
 import synapse.dementia.domain.users.dto.request.UsersSignUpReq;
 import synapse.dementia.domain.users.dto.response.UsersInfoRes;
+import synapse.dementia.domain.users.dto.response.UsersSignInRes;
 import synapse.dementia.domain.users.dto.response.UsersSignUpRes;
 import synapse.dementia.domain.users.repository.UsersRepository;
 import synapse.dementia.global.exception.BadRequestException;
 import synapse.dementia.global.exception.ConflictException;
 import synapse.dementia.global.exception.ErrorResult;
 import synapse.dementia.global.exception.NotFoundException;
+import synapse.dementia.global.security.CustomAuthenticationToken;
 
 @Service
 public class UsersService {
 
 	private final UsersRepository usersRepository;
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
+	private final AuthenticationManager authenticationManager;
 
-	public UsersService(UsersRepository usersRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+	public UsersService(UsersRepository usersRepository, BCryptPasswordEncoder bCryptPasswordEncoder,
+		AuthenticationManager authenticationManager) {
 		this.usersRepository = usersRepository;
 		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+		this.authenticationManager = authenticationManager;
 	}
 
 	@Transactional
@@ -142,5 +147,19 @@ public class UsersService {
 		});
 
 		user.setDeleted(Boolean.TRUE);
+	}
+
+	@Transactional
+	public UsersSignInRes authenticateUser(UsersSignInReq dto) {
+		// authenticationManager를 호출해 미인증 토큰을 인증 토큰으로 반환
+		Authentication authentication = authenticationManager.authenticate(
+			new CustomAuthenticationToken(dto.nickName(), dto.password())
+		);
+
+		// 인증된 토큰을 인증 컨텍스트에 설정
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+
+		CustomUserDetails user = (CustomUserDetails)authentication.getPrincipal();
+		return new UsersSignInRes(user.getUsersIdx(), user.getUsername(), user.getAuthorities());
 	}
 }

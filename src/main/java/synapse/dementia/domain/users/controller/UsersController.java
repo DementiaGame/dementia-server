@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,9 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import synapse.dementia.domain.users.dto.request.UsersInfoUpdateReq;
+import synapse.dementia.domain.users.dto.request.UsersSignInReq;
 import synapse.dementia.domain.users.dto.request.UsersSignUpReq;
 import synapse.dementia.domain.users.dto.response.UsersInfoRes;
+import synapse.dementia.domain.users.dto.response.UsersSignInRes;
 import synapse.dementia.domain.users.dto.response.UsersSignUpRes;
 import synapse.dementia.domain.users.service.UsersService;
 import synapse.dementia.global.base.BaseResponse;
@@ -69,5 +73,17 @@ public class UsersController {
 
 		//response.sendRedirect("http://localhost:8080/auth/signout");
 		return BaseResponse.ofSuccess("delete success");
+	}
+
+	@PostMapping("/signin")
+	public BaseResponse signIn(@RequestBody UsersSignInReq dto, HttpServletRequest request) {
+		UsersSignInRes usersSignInRes = usersService.authenticateUser(dto);
+
+		// 세션을 생성하고 인증 컨텍스트를 세션에 저장
+		HttpSession session = request.getSession(true);
+		session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
+
+		BaseResponse<UsersSignInRes> response = BaseResponse.ofSuccess(usersSignInRes);
+		return response;
 	}
 }
