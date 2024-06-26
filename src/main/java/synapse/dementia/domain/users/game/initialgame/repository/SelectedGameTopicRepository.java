@@ -8,4 +8,6 @@ import java.util.Optional;
 
 public interface SelectedGameTopicRepository extends JpaRepository<SelectedGameTopic, Long> {
     Optional<SelectedGameTopic> findByUserAndTopicName(Users user, String topicName);
+    Optional<SelectedGameTopic> findByUser(Users user);
+
 }
