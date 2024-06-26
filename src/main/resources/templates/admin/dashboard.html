@@ -9,11 +9,13 @@
             background-color: #0b1727;
             color: #ffffff;
         }
+
         .sidebar {
             height: 100vh;
             background-color: #0f233f;
             padding: 1rem;
         }
+
         .sidebar a {
             color: #a3b8d9;
             text-decoration: none;
@@ -22,19 +24,23 @@
             border-radius: 0.5rem;
             margin-bottom: 0.5rem;
         }
+
         .sidebar a:hover, .sidebar a.active {
             background-color: #1a3556;
             color: #ffffff;
         }
+
         .card {
             background-color: #182b47;
             border: none;
             border-radius: 1rem;
             margin-bottom: 1rem;
         }
+
         .card .card-body {
             color: #ffffff;
         }
+
         .header {
             display: flex;
             justify-content: space-between;
@@ -44,44 +50,86 @@
             border-radius: 1rem;
             margin-bottom: 1rem;
         }
+
         .header .search-bar {
             flex-grow: 1;
             margin-right: 1rem;
         }
+
         .header .user-info {
             display: flex;
             align-items: center;
         }
+
         .header .user-info img {
             border-radius: 50%;
             width: 40px;
             height: 40px;
             margin-right: 0.5rem;
         }
+
         .thead-dark {
             background-color: #1a3556;
             color: #ffffff;
         }
+
         .table tbody tr td {
             color: #ffffff;
+            word-wrap: break-word;
+            white-space: normal;
         }
+
         .section-title {
             margin-bottom: 1rem;
             font-size: 1.5rem;
             font-weight: bold;
             color: #ffffff;
         }
-        /* Modal text color */
+
         .modal-content {
             color: #000000;
         }
+
         .card-container {
-            margin-top: 2rem; /* 상단 공백 추가 */
-            margin-bottom: 2rem; /* 하단 공백 추가 */
+            margin-top: 2rem;
+            margin-bottom: 2rem;
         }
+
         #main-content {
             overflow-y: auto;
-            padding-bottom: 2rem; /* 하단 공백 추가 */
+            padding-bottom: 2rem;
+        }
+
+        .text-box {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            max-width: 200px; /* 적절한 너비 설정 */
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .table th, .table td {
+            vertical-align: middle;
+        }
+
+        .table {
+            table-layout: fixed;
+        }
+
+        .table th, .table td {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .error-message {
+            max-width: 200px; /* 너비를 적절히 설정 */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
     </style>
 </head>
@@ -99,7 +147,6 @@
         </nav>
         <main role="main" class="col-md-10 ml-sm-auto px-4">
             <div id="main-content" style="overflow-y: auto; height: calc(100vh - 100px);">
-                <!-- Users section -->
                 <div class="card-container">
                     <div class="card">
                         <div class="card-body">
@@ -130,7 +177,6 @@
                                     </td>
                                     <td>
                                         <button class="btn btn-danger btn-sm" data-toggle="modal" th:data-target="'#deleteModal' + ${user.usersIdx}">삭제</button>
-                                        <!-- Delete Modal -->
                                         <div class="modal fade" th:id="'deleteModal' + ${user.usersIdx}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                             <div class="modal-dialog" role="document">
                                                 <div class="modal-content">
@@ -153,7 +199,6 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <!-- End of Delete Modal -->
                                     </td>
                                 </tr>
                                 </tbody>
@@ -191,6 +236,23 @@
                                 </tr>
                                 </tbody>
                             </table>
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination">
+                                    <li class="page-item" th:classappend="${successLogsPage.hasPrevious()} ? '': 'disabled'">
+                                        <a class="page-link" th:href="@{'/admin?page=' + ${successLogsPage.number - 1}}" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                    <li class="page-item" th:each="i : ${#numbers.sequence(1, successLogsPage.totalPages)}" th:classappend="${successLogsPage.number + 1 == i} ? 'active'">
+                                        <a class="page-link" th:href="@{'/admin?page=' + ${i - 1}}" th:text="${i}">1</a>
+                                    </li>
+                                    <li class="page-item" th:classappend="${successLogsPage.hasNext()} ? '': 'disabled'">
+                                        <a class="page-link" th:href="@{'/admin?page=' + ${successLogsPage.number + 1}}" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
                         </div>
                     </div>
                 </div>
@@ -198,7 +260,7 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="section-title">API Error Logs</div>
-                            <table class="table table-striped mt-4">
+                            <table class="table table-striped">
                                 <thead class="thead-dark">
                                 <tr>
                                     <th>Server IP</th>
@@ -222,10 +284,35 @@
                                     <td th:text="${#temporals.format(log.requestTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
                                     <td th:text="${#temporals.format(log.responseTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
                                     <td th:text="${log.connectionTime}"></td>
-                                    <td th:text="${log.errorMessage}"></td>
+                                    <td class="text-box" th:text="${log.errorMessage}"></td>
                                 </tr>
                                 </tbody>
                             </table>
+
+                            <!-- Pagination for API Error Logs -->
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination">
+                                    <li class="page-item"
+                                        th:classappend="${errorLogsPage.hasPrevious()} ? '': 'disabled'">
+                                        <a class="page-link" th:href="@{'/admin?page=' + ${errorLogsPage.number - 1}}"
+                                           aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                    <li class="page-item"
+                                        th:each="i : ${#numbers.sequence(1, errorLogsPage.totalPages)}"
+                                        th:classappend="${errorLogsPage.number + 1 == i} ? 'active'">
+                                        <a class="page-link" th:href="@{'/admin?page=' + ${i - 1}}" th:text="${i}">1</a>
+                                    </li>
+                                    <li class="page-item" th:classappend="${errorLogsPage.hasNext()} ? '': 'disabled'">
+                                        <a class="page-link" th:href="@{'/admin?page=' + ${errorLogsPage.number + 1}}"
+                                           aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+
                         </div>
                     </div>
                 </div>
@@ -237,13 +324,13 @@
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script>
-    $(document).ready(function() {
-        $('.nav-link').on('click', function(e) {
+    $(document).ready(function () {
+        $('.nav-link').on('click', function (e) {
             e.preventDefault();
             var target = $(this).data('target');
             var url = $(this).data('url');
 
-            console.log("Requesting URL: " + url); // 콘솔 로그 추가
+            console.log("Requesting URL: " + url);
 
             $('.nav-link').removeClass('active');
             $(this).addClass('active');
@@ -251,12 +338,12 @@
             $.ajax({
                 url: url,
                 method: 'GET',
-                success: function(data) {
-                    console.log("Request succeeded."); // 콘솔 로그 추가
+                success: function (data) {
+                    console.log("Request succeeded.");
                     $('#main-content').html(data);
                 },
-                error: function(xhr, status, error) {
-                    console.log("Request failed. Status: " + status + ", Error: " + error); // 콘솔 로그 추가
+                error: function (xhr, status, error) {
+                    console.log("Request failed. Status: " + status + ", Error: " + error);
                     $('#main-content').html('<div class="alert alert-danger">Failed to load content.</div>');
                 }
             });
