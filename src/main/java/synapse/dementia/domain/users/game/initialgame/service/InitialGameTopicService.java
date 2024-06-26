@@ -5,14 +5,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import synapse.dementia.domain.users.game.initialgame.domain.SelectedGameTopic;
 import synapse.dementia.domain.users.game.initialgame.dto.request.SelectGameTopicRequest;
+import synapse.dementia.domain.users.game.initialgame.dto.response.InitialGameQuestionResponse;
 import synapse.dementia.domain.users.game.initialgame.dto.response.InitialGameTopicResponse;
 import synapse.dementia.domain.users.game.initialgame.dto.response.SelectedGameTopicResponse;
+import synapse.dementia.domain.users.game.initialgame.repository.InitialGameQuestionRepository;
 import synapse.dementia.domain.users.game.initialgame.repository.SelectedGameTopicRepository;
+import synapse.dementia.domain.users.member.domain.Users;
 import synapse.dementia.domain.users.member.repository.UsersRepository;
 import synapse.dementia.domain.admin.excel.repository.ExcelDataRepository;
-import synapse.dementia.domain.users.member.domain.Users;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,15 +23,21 @@ public class InitialGameTopicService {
 
     private final ExcelDataRepository excelDataRepository;
     private final SelectedGameTopicRepository selectedGameTopicRepository;
+    private final InitialGameQuestionRepository initialGameQuestionRepository;
     private final UsersRepository userRepository;
+    private final InitialGameQuestionService initialGameQuestionService;
 
     @Autowired
     public InitialGameTopicService(ExcelDataRepository excelDataRepository,
                                    SelectedGameTopicRepository selectedGameTopicRepository,
-                                   UsersRepository userRepository) {
+                                   InitialGameQuestionRepository initialGameQuestionRepository,
+                                   UsersRepository userRepository,
+                                   InitialGameQuestionService initialGameQuestionService) {
         this.excelDataRepository = excelDataRepository;
         this.selectedGameTopicRepository = selectedGameTopicRepository;
+        this.initialGameQuestionRepository = initialGameQuestionRepository;
         this.userRepository = userRepository;
+        this.initialGameQuestionService = initialGameQuestionService;
     }
 
     @Transactional(readOnly = true)
@@ -48,6 +57,14 @@ public class InitialGameTopicService {
         Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
 
+        // 기존에 선택한 주제가 있으면 관련 질문을 먼저 삭제
+        Optional<SelectedGameTopic> existingTopic = selectedGameTopicRepository.findByUser(user);
+        existingTopic.ifPresent(topic -> {
+            initialGameQuestionRepository.deleteBySelectedGameTopic(topic);
+            selectedGameTopicRepository.delete(topic);
+        });
+
+        // 새로운 주제 선택
         SelectedGameTopic selectedGameTopic = SelectedGameTopic.builder()
                 .user(user)
                 .topicName(request.topicName())
@@ -56,4 +73,17 @@ public class InitialGameTopicService {
         SelectedGameTopic savedSelectedTopic = selectedGameTopicRepository.save(selectedGameTopic);
         return new SelectedGameTopicResponse(savedSelectedTopic.getIdx(), savedSelectedTopic.getUser().getUsersIdx(), savedSelectedTopic.getTopicName());
     }
+
+    @Transactional
+    public SelectAndQuestionsResponse selectTopicAndGetQuestions(Long userId, SelectGameTopicRequest request) {
+        // 새로운 주제 선택
+        SelectedGameTopicResponse selectedTopic = selectTopic(userId, request);
+
+        // 선택한 주제에 대한 질문 가져오기
+        List<InitialGameQuestionResponse> questions = initialGameQuestionService.getRandomQuestionsByTopic(userId, request);
+
+        return new SelectAndQuestionsResponse(selectedTopic, questions);
+    }
+
+    public record SelectAndQuestionsResponse(SelectedGameTopicResponse selectedTopic, List<InitialGameQuestionResponse> questions) {}
 }
