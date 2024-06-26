@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import synapse.dementia.domain.users.domain.CustomUserDetails;
 import synapse.dementia.domain.users.domain.Users;
 import synapse.dementia.domain.users.dto.UsersDto;
+import synapse.dementia.domain.users.dto.request.UsersInfoUpdateReq;
 import synapse.dementia.domain.users.dto.request.UsersSignUpReq;
 import synapse.dementia.domain.users.dto.response.UsersInfoRes;
 import synapse.dementia.domain.users.dto.response.UsersSignUpRes;
@@ -22,6 +23,7 @@ import synapse.dementia.domain.users.repository.UsersRepository;
 import synapse.dementia.global.exception.BadRequestException;
 import synapse.dementia.global.exception.ConflictException;
 import synapse.dementia.global.exception.ErrorResult;
+import synapse.dementia.global.exception.NotFoundException;
 
 @Service
 public class UsersService {
@@ -84,6 +86,48 @@ public class UsersService {
 			user.get().getFaceData(),
 			user.get().getProfileImage(),
 			user.get().getRole()
+		);
+	}
+
+	@Transactional
+	public UsersInfoRes updateUser(UsersInfoUpdateReq dto) {
+		// 중복 닉네임 체크
+		if (usersRepository.findByNickName(dto.nickName()).isPresent()) {
+			throw new ConflictException(ErrorResult.NICK_NAME_DUPLICATION_CONFLICT);
+		}
+		// 비밀번호 재확인
+		if (!dto.password().equals(dto.secondPassword())) {
+			throw new BadRequestException(ErrorResult.PASSWORD_MISMATCH_BAD_REQUEST);
+		}
+
+		CustomUserDetails userDetails = getCustomUserDetails();
+		//Users user = usersRepository.updateUserInfoByUserId(userDetails.getUsersIdx(), dto);
+
+		Users user = usersRepository.findById(userDetails.getUsersIdx()).orElseThrow(() -> {
+			throw new NotFoundException(ErrorResult.USER_NOT_EXIST_BAD_REQUEST);
+		});
+
+		// 변경하지 않을 데이터도 요청에서 그대로 보내줘야 함, 더티체킹
+		user.setBirthYear(dto.birthYear());
+		user.setGender(dto.gender());
+		user.setNickName(dto.nickName());
+		user.setPassword(bCryptPasswordEncoder.encode(dto.password()));
+		//user.setDeleted(dto.deleted());
+		user.setFaceData(dto.faceData());
+		user.setProfileImage(dto.profileImage());
+		//user.setRole(dto.role());
+
+		//usersRepository.save(user);
+
+		return new UsersInfoRes(
+			user.getUsersIdx(),
+			user.getBirthYear(),
+			user.getGender(),
+			user.getNickName(),
+			user.getDeleted(),
+			user.getFaceData(),
+			user.getProfileImage(),
+			user.getRole()
 		);
 	}
 }
