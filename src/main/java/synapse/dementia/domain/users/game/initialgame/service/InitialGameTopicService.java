@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import synapse.dementia.domain.users.game.initialgame.domain.SelectedGameTopic;
 import synapse.dementia.domain.users.game.initialgame.dto.request.SelectGameTopicRequest;
+import synapse.dementia.domain.users.game.initialgame.dto.response.InitialGameQuestionResponse;
 import synapse.dementia.domain.users.game.initialgame.dto.response.InitialGameTopicResponse;
 import synapse.dementia.domain.users.game.initialgame.dto.response.SelectedGameTopicResponse;
 import synapse.dementia.domain.users.game.initialgame.repository.SelectedGameTopicRepository;
@@ -21,14 +22,17 @@ public class InitialGameTopicService {
     private final ExcelDataRepository excelDataRepository;
     private final SelectedGameTopicRepository selectedGameTopicRepository;
     private final UsersRepository userRepository;
+    private final InitialGameQuestionService initialGameQuestionService;
 
     @Autowired
     public InitialGameTopicService(ExcelDataRepository excelDataRepository,
                                    SelectedGameTopicRepository selectedGameTopicRepository,
-                                   UsersRepository userRepository) {
+                                   UsersRepository userRepository,
+                                   InitialGameQuestionService initialGameQuestionService) {
         this.excelDataRepository = excelDataRepository;
         this.selectedGameTopicRepository = selectedGameTopicRepository;
         this.userRepository = userRepository;
+        this.initialGameQuestionService = initialGameQuestionService;
     }
 
     @Transactional(readOnly = true)
@@ -56,4 +60,15 @@ public class InitialGameTopicService {
         SelectedGameTopic savedSelectedTopic = selectedGameTopicRepository.save(selectedGameTopic);
         return new SelectedGameTopicResponse(savedSelectedTopic.getIdx(), savedSelectedTopic.getUser().getUsersIdx(), savedSelectedTopic.getTopicName());
     }
+
+    @Transactional
+    public SelectAndQuestionsResponse selectTopicAndGetQuestions(Long userId, SelectGameTopicRequest request) {
+        SelectedGameTopicResponse selectedTopicResponse = selectTopic(userId, request);
+        List<InitialGameQuestionResponse> questions = initialGameQuestionService.getRandomQuestionsByTopic(userId, request);
+        return new SelectAndQuestionsResponse(selectedTopicResponse, questions);
+    }
+
+    public static record SelectAndQuestionsResponse(
+            SelectedGameTopicResponse selectedTopic,
+            List<InitialGameQuestionResponse> questions) {}
 }
