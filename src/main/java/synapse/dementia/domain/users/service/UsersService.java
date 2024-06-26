@@ -71,8 +71,7 @@ public class UsersService {
 	@Transactional
 	public UsersInfoRes findUser() {
 		// 내부 서버 세션에서 authentication 객체 로드
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		CustomUserDetails userDetails = (CustomUserDetails)authentication.getPrincipal();
+		CustomUserDetails userDetails = getCustomUserDetails();
 
 		Optional<Users> user = usersRepository.findById(userDetails.getUsersIdx());
 
