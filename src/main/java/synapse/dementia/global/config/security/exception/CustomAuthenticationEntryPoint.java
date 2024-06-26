@@ -1,4 +1,4 @@
-package synapse.dementia.global.config.security;
+package synapse.dementia.global.config.security.exception;
 
 import java.io.IOException;
 
@@ -9,8 +9,6 @@ import org.springframework.stereotype.Component;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import synapse.dementia.global.base.BaseResponse;
-import synapse.dementia.global.exception.ErrorResult;
 
 @Component
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {

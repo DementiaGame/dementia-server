@@ -23,6 +23,11 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 import jakarta.servlet.http.HttpServletResponse;
+import synapse.dementia.global.config.security.customFilter.CustomAuthenticationFailureHandler;
+import synapse.dementia.global.config.security.customFilter.CustomAuthenticationFilter;
+import synapse.dementia.global.config.security.customFilter.CustomAuthenticationSuccessHandler;
+import synapse.dementia.global.config.security.exception.CustomAccessDeniedHandler;
+import synapse.dementia.global.config.security.exception.CustomAuthenticationEntryPoint;
 
 @Configuration
 public class SecurityConfig {

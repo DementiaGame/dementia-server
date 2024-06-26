@@ -24,7 +24,7 @@ import synapse.dementia.global.exception.BadRequestException;
 import synapse.dementia.global.exception.ConflictException;
 import synapse.dementia.global.exception.ErrorResult;
 import synapse.dementia.global.exception.NotFoundException;
-import synapse.dementia.global.config.security.CustomAuthenticationToken;
+import synapse.dementia.global.config.security.customFilter.CustomAuthenticationToken;
 
 @Service
 public class UsersService {

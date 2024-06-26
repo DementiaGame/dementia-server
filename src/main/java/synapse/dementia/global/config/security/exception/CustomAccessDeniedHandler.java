@@ -1,4 +1,4 @@
-package synapse.dementia.global.config.security;
+package synapse.dementia.global.config.security.exception;
 
 import java.io.IOException;
 
