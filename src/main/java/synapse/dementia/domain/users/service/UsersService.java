@@ -1,5 +1,7 @@
 package synapse.dementia.domain.users.service;
 
+import static synapse.dementia.global.security.SecurityUtil.*;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -129,5 +131,16 @@ public class UsersService {
 			user.getProfileImage(),
 			user.getRole()
 		);
+	}
+
+	@Transactional
+	public void deletedUser() {
+		CustomUserDetails userDetails = getCustomUserDetails();
+
+		Users user = usersRepository.findById(userDetails.getUsersIdx()).orElseThrow(() -> {
+			throw new NotFoundException(ErrorResult.USER_NOT_EXIST_BAD_REQUEST);
+		});
+
+		user.setDeleted(Boolean.TRUE);
 	}
 }
