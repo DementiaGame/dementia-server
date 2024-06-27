@@ -59,12 +59,8 @@ public class InitialGameQuestion extends BaseEntity {
         this.gameScore = gameScore != null ? gameScore : 0;
     }
 
-    public void incrementHearts() {
-        this.gameScore += 1;
-    }
-
-    public void decrementHearts() {
-        this.gameScore -= 1;
+    public void incrementScore() {
+        this.gameScore = 1;
     }
 
     public void setCorrect(boolean correct) {

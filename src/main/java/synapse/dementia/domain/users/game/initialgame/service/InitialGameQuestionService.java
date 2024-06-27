@@ -7,6 +7,7 @@ import synapse.dementia.domain.users.game.initialgame.domain.InitialGameQuestion
 import synapse.dementia.domain.users.game.initialgame.domain.SelectedGameTopic;
 import synapse.dementia.domain.users.game.initialgame.dto.request.SelectGameTopicRequest;
 import synapse.dementia.domain.users.game.initialgame.dto.response.InitialGameQuestionResponse;
+import synapse.dementia.domain.users.game.initialgame.dto.response.SelectedGameTopicResponse;
 import synapse.dementia.domain.users.game.initialgame.repository.InitialGameQuestionRepository;
 import synapse.dementia.domain.users.game.initialgame.repository.SelectedGameTopicRepository;
 import synapse.dementia.domain.users.member.domain.Users;
@@ -39,13 +40,13 @@ public class InitialGameQuestionService {
     @Transactional(readOnly = true)
     public List<InitialGameQuestionResponse> getRandomQuestionsByTopic(Long userIdx, SelectGameTopicRequest request) {
         Users user = usersRepository.findById(userIdx).orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
-        Optional<SelectedGameTopic> selectedGameTopicOpt = selectedGameTopicRepository.findByUserAndTopicName(user, request.topicName());
+        List<SelectedGameTopic> selectedGameTopics = selectedGameTopicRepository.findByUserAndTopicName(user, request.topicName());
 
-        if (selectedGameTopicOpt.isEmpty()) {
+        if (selectedGameTopics.isEmpty()) {
             throw new IllegalArgumentException("Selected topic not found");
         }
 
-        SelectedGameTopic selectedGameTopic = selectedGameTopicOpt.get();
+        SelectedGameTopic selectedGameTopic = selectedGameTopics.get(0); // 여러 레코드 중 첫 번째를 사용
 
         List<ExcelData> excelDataList = excelDataRepository.findByTopic(request.topicName());
         Random random = new Random();
