@@ -11,5 +11,7 @@ import synapse.dementia.domain.users.member.domain.Users;
 public interface InitialGameQuestionRepository extends JpaRepository<InitialGameQuestion, Long> {
     int countByUserAndCorrect(Users user, boolean correct);
     void deleteBySelectedGameTopic(SelectedGameTopic selectedGameTopic);
+    int countByUserAndSelectedGameTopicAndCorrect(Users user, SelectedGameTopic selectedGameTopic, boolean correct);
+
 
 }

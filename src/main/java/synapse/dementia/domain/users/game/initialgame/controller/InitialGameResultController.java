@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import synapse.dementia.domain.users.game.initialgame.dto.request.InitialGameResultRequest;
+import synapse.dementia.domain.users.game.initialgame.dto.request.TopicRequest;
 import synapse.dementia.domain.users.game.initialgame.dto.response.InitialGameResultResponse;
+import synapse.dementia.domain.users.game.initialgame.dto.response.TopicCorrectCountResponse;
 import synapse.dementia.domain.users.game.initialgame.service.InitialGameResultService;
 import synapse.dementia.global.base.BaseResponse;
 
@@ -29,5 +31,10 @@ public class InitialGameResultController {
     public ResponseEntity<BaseResponse> getTotalCorrectAnswers(@PathVariable Long userIdx) {
         int totalCorrect = initialGameResultService.getTotalCorrectAnswers(userIdx);
         return ResponseEntity.ok(BaseResponse.ofSuccess(totalCorrect));
+    }
+    @PostMapping("/correct-count/{userId}")
+    public ResponseEntity<BaseResponse> getCorrectCountByTopic(@PathVariable Long userId, @RequestBody TopicRequest request) {
+        TopicCorrectCountResponse response = initialGameResultService.getCorrectCountByTopic(userId, request.topicName());
+        return ResponseEntity.ok(BaseResponse.ofSuccess(response));
     }
 }
