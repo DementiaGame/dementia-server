@@ -57,13 +57,6 @@ public class InitialGameTopicService {
         Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
 
-        // 기존에 선택한 주제를 삭제하는 부분 제거
-        // Optional<SelectedGameTopic> existingTopic = selectedGameTopicRepository.findByUser(user);
-        // existingTopic.ifPresent(topic -> {
-        //     initialGameQuestionRepository.deleteBySelectedGameTopic(topic);
-        //     selectedGameTopicRepository.delete(topic);
-        // });
-
         // 새로운 주제 선택
         SelectedGameTopic selectedGameTopic = SelectedGameTopic.builder()
                 .user(user)
