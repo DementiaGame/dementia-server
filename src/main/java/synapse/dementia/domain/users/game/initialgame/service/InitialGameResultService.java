@@ -50,7 +50,7 @@ public class InitialGameResultService {
         initialGameQuestionRepository.save(question);
         initialGameResultRepository.save(result);
 
-        return new InitialGameResultResponse(result.getResultIdx(), result.getUser().getUsersIdx(), result.getTotalGameScore(), result.getTotalHearts());
+        return new InitialGameResultResponse(result.getResultIdx(), result.getUser().getUsersIdx(), correct, result.getTotalGameScore(), result.getTotalHearts());
     }
 
     @Transactional(readOnly = true)
