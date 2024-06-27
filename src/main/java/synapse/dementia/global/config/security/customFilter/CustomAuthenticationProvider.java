@@ -1,4 +1,4 @@
-package synapse.dementia.global.config.security;
+package synapse.dementia.global.config.security.customFilter;
 
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationProvider;
