@@ -59,7 +59,6 @@ public class InitialGameQuestionService {
 
         List<InitialGameQuestion> initialGameQuestions = shuffledExcelDataList.stream()
                 .map(excelData -> InitialGameQuestion.builder()
-                        .excelData(excelData)
                         .user(user)
                         .selectedGameTopic(selectedGameTopic)
                         .consonantQuiz(excelData.getQuestion())
@@ -75,7 +74,6 @@ public class InitialGameQuestionService {
         return savedQuestions.stream()
                 .map(initialGameQuestion -> new InitialGameQuestionResponse(
                         initialGameQuestion.getQuestionIdx(),
-                        initialGameQuestion.getExcelData().getIdx(),
                         initialGameQuestion.getConsonantQuiz(),
                         initialGameQuestion.getAnswerWord(),
                         initialGameQuestion.getHintImage()))

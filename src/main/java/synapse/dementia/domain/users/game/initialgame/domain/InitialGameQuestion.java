@@ -21,10 +21,6 @@ public class InitialGameQuestion extends BaseEntity {
     private Long questionIdx;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "excel_data_id", nullable = false)
-    private ExcelData excelData;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private Users user;
 
@@ -48,8 +44,7 @@ public class InitialGameQuestion extends BaseEntity {
     private Integer gameScore = 0; // 기본값 설정
 
     @Builder
-    public InitialGameQuestion(ExcelData excelData, Users user, SelectedGameTopic selectedGameTopic, String consonantQuiz, String answerWord, String hintImage, Boolean correct, Integer gameScore) {
-        this.excelData = excelData;
+    public InitialGameQuestion(Users user, SelectedGameTopic selectedGameTopic, String consonantQuiz, String answerWord, String hintImage, Boolean correct, Integer gameScore) {
         this.user = user;
         this.selectedGameTopic = selectedGameTopic;
         this.consonantQuiz = consonantQuiz;
