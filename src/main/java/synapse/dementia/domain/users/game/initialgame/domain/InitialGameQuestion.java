@@ -21,11 +21,11 @@ public class InitialGameQuestion extends BaseEntity {
     private Long questionIdx;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "excel_data_id", nullable = false)
+    @JoinColumn(name = "excel_data_idx", nullable = false)
     private ExcelData excelData;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_idx", nullable = false)
     private Users user;
 
     @ManyToOne(fetch = FetchType.LAZY)
