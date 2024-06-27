@@ -32,10 +32,9 @@ public class InitialGameResultService {
         boolean correct = question.getAnswerWord().equalsIgnoreCase(request.answer());
 
         if (correct) {
-            question.incrementHearts();
+            question.incrementScore();
             question.setCorrect(true);
         } else {
-            question.decrementHearts();
             question.setCorrect(false);
         }
 
