@@ -4,9 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import synapse.dementia.domain.users.game.initialgame.domain.InitialGameQuestion;
+import synapse.dementia.domain.users.game.initialgame.domain.InitialGameResult;
 import synapse.dementia.domain.users.game.initialgame.dto.request.InitialGameResultRequest;
 import synapse.dementia.domain.users.game.initialgame.dto.response.InitialGameResultResponse;
 import synapse.dementia.domain.users.game.initialgame.repository.InitialGameQuestionRepository;
+import synapse.dementia.domain.users.game.initialgame.repository.InitialGameResultRepository;
 import synapse.dementia.domain.users.member.domain.Users;
 import synapse.dementia.domain.users.member.repository.UsersRepository;
 
@@ -14,11 +16,13 @@ import synapse.dementia.domain.users.member.repository.UsersRepository;
 public class InitialGameResultService {
 
     private final InitialGameQuestionRepository initialGameQuestionRepository;
+    private final InitialGameResultRepository initialGameResultRepository;
     private final UsersRepository userRepository;
 
     @Autowired
-    public InitialGameResultService(InitialGameQuestionRepository initialGameQuestionRepository, UsersRepository userRepository) {
+    public InitialGameResultService(InitialGameQuestionRepository initialGameQuestionRepository, InitialGameResultRepository initialGameResultRepository, UsersRepository userRepository) {
         this.initialGameQuestionRepository = initialGameQuestionRepository;
+        this.initialGameResultRepository = initialGameResultRepository;
         this.userRepository = userRepository;
     }
 
@@ -31,16 +35,22 @@ public class InitialGameResultService {
 
         boolean correct = question.getAnswerWord().equalsIgnoreCase(request.answer());
 
+        InitialGameResult result = initialGameResultRepository.findByUser(user)
+                .orElseGet(() -> initialGameResultRepository.save(new InitialGameResult(user, 0, 3)));
+
         if (correct) {
             question.incrementScore();
             question.setCorrect(true);
+            result.addGameScore(1);
         } else {
             question.setCorrect(false);
+            result.subtractHearts(1);
         }
 
-        InitialGameQuestion savedQuestion = initialGameQuestionRepository.save(question);
+        initialGameQuestionRepository.save(question);
+        initialGameResultRepository.save(result);
 
-        return new InitialGameResultResponse(savedQuestion.getQuestionIdx(), savedQuestion.getUser().getUsersIdx(), savedQuestion.getCorrect(), savedQuestion.getGameScore());
+        return new InitialGameResultResponse(result.getResultIdx(), result.getUser().getUsersIdx(), result.getTotalGameScore(), result.getTotalHearts());
     }
 
     @Transactional(readOnly = true)
