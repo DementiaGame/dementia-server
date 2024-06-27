@@ -8,14 +8,19 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import lombok.RequiredArgsConstructor;
 import synapse.dementia.domain.admin.logs.domain.ApiErrorLogs;
 import synapse.dementia.domain.admin.logs.domain.ApiSuccessLogs;
 import synapse.dementia.domain.admin.logs.service.LogsService;
 import synapse.dementia.domain.admin.member.dto.MemberDto;
+import synapse.dementia.domain.admin.member.dto.request.DeleteMemberDto;
 import synapse.dementia.domain.admin.member.service.MemberService;
 
 @Controller
@@ -45,5 +50,16 @@ public class DashBoardController {
 		model.addAttribute("errorLogsPage", errorLogsPage);
 
 		return "admin/dashboard";
+	}
+
+	@PostMapping("/dashboard/delete")
+	public String deleteUsers(@RequestBody DeleteMemberDto deleteMemberDto, RedirectAttributes redirectAttributes) {
+		try {
+			memberService.deleteUsers(deleteMemberDto);
+			redirectAttributes.addFlashAttribute("message", "사용자가 성공적으로 삭제되었습니다.");
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("errorMessage", "사용자 삭제 중 오류가 발생했습니다.");
+		}
+		return "redirect:/admin/dashboard";
 	}
 }
