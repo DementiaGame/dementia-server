@@ -57,12 +57,12 @@ public class InitialGameTopicService {
         Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
 
-        // 기존에 선택한 주제가 있으면 관련 질문을 먼저 삭제
-        Optional<SelectedGameTopic> existingTopic = selectedGameTopicRepository.findByUser(user);
-        existingTopic.ifPresent(topic -> {
-            initialGameQuestionRepository.deleteBySelectedGameTopic(topic);
-            selectedGameTopicRepository.delete(topic);
-        });
+        // 기존에 선택한 주제를 삭제하는 부분 제거
+        // Optional<SelectedGameTopic> existingTopic = selectedGameTopicRepository.findByUser(user);
+        // existingTopic.ifPresent(topic -> {
+        //     initialGameQuestionRepository.deleteBySelectedGameTopic(topic);
+        //     selectedGameTopicRepository.delete(topic);
+        // });
 
         // 새로운 주제 선택
         SelectedGameTopic selectedGameTopic = SelectedGameTopic.builder()
@@ -83,6 +83,16 @@ public class InitialGameTopicService {
         List<InitialGameQuestionResponse> questions = initialGameQuestionService.getRandomQuestionsByTopic(userId, request);
 
         return new SelectAndQuestionsResponse(selectedTopic, questions);
+    }
+
+    @Transactional(readOnly = true)
+    public List<SelectedGameTopicResponse> getSelectedTopics(Long userId) {
+        Users user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
+
+        return selectedGameTopicRepository.findByUser(user).stream()
+                .map(topic -> new SelectedGameTopicResponse(topic.getIdx(), topic.getUser().getUsersIdx(), topic.getTopicName()))
+                .collect(Collectors.toList());
     }
 
     public record SelectAndQuestionsResponse(SelectedGameTopicResponse selectedTopic, List<InitialGameQuestionResponse> questions) {}
