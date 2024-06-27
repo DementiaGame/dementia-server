@@ -1,6 +1,7 @@
 package synapse.dementia.domain.users.member.domain;
 
 import lombok.Setter;
+
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -57,7 +58,7 @@ public class Users extends BaseEntity {
 
 	protected Users() {
 	}
-	
+
 	public Users(String nickName, String password, Integer birthYear, Gender gender, Boolean deleted, Role role) {
 		this.nickName = nickName;
 		this.password = password;
@@ -65,5 +66,11 @@ public class Users extends BaseEntity {
 		this.gender = gender;
 		this.deleted = deleted;
 		this.role = role;
+	}
+
+	public void updateUsers(Integer birthYear, Gender gender, String nickName) {
+		this.birthYear = birthYear;
+		this.gender = gender;
+		this.nickName = nickName;
 	}
 }

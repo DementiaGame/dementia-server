@@ -15,11 +15,11 @@ import synapse.dementia.global.base.BaseEntity;
 public class InitialGameResult extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "result_id")
+    @Column(name = "result_idx")
     private Long resultIdx;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_idx", nullable = false)
     private Users user;
 
     @Column(name = "total_game_score", nullable = false)
