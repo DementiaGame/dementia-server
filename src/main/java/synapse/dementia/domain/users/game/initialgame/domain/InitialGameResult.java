@@ -19,7 +19,7 @@ public class InitialGameResult extends BaseEntity {
     private Long resultIdx;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_idx", nullable = false)
+    @JoinColumn(name = "users_idx", nullable = false)
     private Users user;
 
     @Column(name = "total_game_score", nullable = false)

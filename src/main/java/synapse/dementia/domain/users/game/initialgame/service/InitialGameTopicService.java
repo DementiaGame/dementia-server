@@ -15,7 +15,6 @@ import synapse.dementia.domain.users.member.repository.UsersRepository;
 import synapse.dementia.domain.admin.excel.repository.ExcelDataRepository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -64,7 +63,7 @@ public class InitialGameTopicService {
                 .build();
 
         SelectedGameTopic savedSelectedTopic = selectedGameTopicRepository.save(selectedGameTopic);
-        return new SelectedGameTopicResponse(savedSelectedTopic.getIdx(), savedSelectedTopic.getUser().getUsersIdx(), savedSelectedTopic.getTopicName());
+        return new SelectedGameTopicResponse(savedSelectedTopic.getSelectedTopicIdx(), savedSelectedTopic.getUser().getUsersIdx(), savedSelectedTopic.getTopicName());
     }
 
     @Transactional
@@ -84,7 +83,7 @@ public class InitialGameTopicService {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
 
         return selectedGameTopicRepository.findByUser(user).stream()
-                .map(topic -> new SelectedGameTopicResponse(topic.getIdx(), topic.getUser().getUsersIdx(), topic.getTopicName()))
+                .map(topic -> new SelectedGameTopicResponse(topic.getSelectedTopicIdx(), topic.getUser().getUsersIdx(), topic.getTopicName()))
                 .collect(Collectors.toList());
     }
 

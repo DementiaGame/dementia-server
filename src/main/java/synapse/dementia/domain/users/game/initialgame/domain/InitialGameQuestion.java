@@ -21,7 +21,7 @@ public class InitialGameQuestion extends BaseEntity {
     private Long questionIdx;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_idx", nullable = false)
+    @JoinColumn(name = "users_idx", nullable = false)
     private Users user;
 
     @ManyToOne(fetch = FetchType.LAZY)
