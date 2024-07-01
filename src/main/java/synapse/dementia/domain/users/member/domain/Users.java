@@ -1,5 +1,9 @@
 package synapse.dementia.domain.users.member.domain;
 
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.OneToMany;
 import lombok.Setter;
 
 import org.hibernate.annotations.DynamicInsert;
@@ -15,6 +19,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import synapse.dementia.domain.users.game.initialgame.domain.SelectedGameTopic;
 import synapse.dementia.global.base.BaseEntity;
 
 @Entity
@@ -55,6 +60,9 @@ public class Users extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "role", nullable = false)
 	private Role role;
+
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<SelectedGameTopic> selectedGameTopics;
 
 	protected Users() {
 	}
