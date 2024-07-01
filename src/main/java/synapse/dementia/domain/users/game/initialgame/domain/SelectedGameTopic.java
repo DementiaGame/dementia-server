@@ -1,5 +1,7 @@
 package synapse.dementia.domain.users.game.initialgame.domain;
 
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -17,10 +19,10 @@ public class SelectedGameTopic extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "selected_topic_idx")
-    private Long idx;
+    private Long selectedTopicIdx;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_idx", nullable = false)
+    @JoinColumn(name = "users_idx", nullable = false)
     private Users user;
 
     @Column(name = "topic_name", nullable = false)
