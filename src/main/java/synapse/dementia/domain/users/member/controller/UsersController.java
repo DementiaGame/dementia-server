@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import synapse.dementia.domain.users.member.dto.request.UsersSignUpReq;
@@ -46,7 +47,7 @@ public class UsersController {
 
 	@GetMapping()
 	public BaseResponse getUserInfo() {
-		UsersInfoRes usersInfoRes = usersService.findUser();
+		UsersInfoRes usersInfoRes = usersService.findCurrentUser();
 		BaseResponse<UsersInfoRes> response = BaseResponse.ofSuccess(usersInfoRes);
 
 		return response;
@@ -84,6 +85,15 @@ public class UsersController {
 		session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
 
 		BaseResponse<UsersSignInRes> response = BaseResponse.ofSuccess(usersSignInRes);
+		return response;
+	}
+
+	@GetMapping("/existnickname")
+	public BaseResponse existNickName(@RequestParam String nickName) {
+		// todo: 닉네임을 받아 디비에 저장된 유저 닉네임과 일치하는지 확인
+		boolean isExist = usersService.findUserByNickName(nickName);
+
+		BaseResponse<Boolean> response = BaseResponse.ofSuccess(isExist);
 		return response;
 	}
 }

@@ -75,7 +75,7 @@ public class UsersService {
 	// }
 
 	@Transactional
-	public UsersInfoRes findUser() {
+	public UsersInfoRes findCurrentUser() {
 		// 내부 서버 세션에서 authentication 객체 로드
 		CustomUserDetails userDetails = getCustomUserDetails();
 
@@ -91,6 +91,16 @@ public class UsersService {
 			user.get().getProfileImage(),
 			user.get().getRole()
 		);
+	}
+
+	@Transactional
+	public boolean findUserByNickName(String nickName) {
+		Optional<Users> user = usersRepository.findByNickName(nickName);
+		if(user.isPresent()) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	@Transactional
