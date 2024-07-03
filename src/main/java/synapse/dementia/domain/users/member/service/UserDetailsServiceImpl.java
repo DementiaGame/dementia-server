@@ -28,7 +28,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String nickName) throws UsernameNotFoundException {
-		Optional<Users> user = usersRepository.findByNickName(nickName);
+		//Optional<Users> user = usersRepository.findByNickName(nickName);
+		Optional<Users> user = usersRepository.findByNickNameAndDeletedFalse(nickName);
 		user.orElseThrow(() -> new NotFoundException(ErrorResult.USER_NOT_EXIST_BAD_REQUEST));
 
 		CustomUserDetails customUserDetails = new CustomUserDetails(user.get());
