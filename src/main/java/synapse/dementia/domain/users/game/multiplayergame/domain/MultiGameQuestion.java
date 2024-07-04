@@ -19,9 +19,14 @@ public class MultiGameQuestion {
 
     private String answer;
 
+    @ManyToOne
+    @JoinColumn(name = "room_idx")
+    private MultiGameRoom multiGameRoom;
+
     @Builder
-    public MultiGameQuestion(String question, String answer){
-        this.question=question;
-        this.answer=answer;
+    public MultiGameQuestion(String question, String answer, MultiGameRoom multiGameRoom) {
+        this.question = question;
+        this.answer = answer;
+        this.multiGameRoom = multiGameRoom;
     }
 }

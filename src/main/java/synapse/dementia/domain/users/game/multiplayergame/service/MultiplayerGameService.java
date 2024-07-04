@@ -2,10 +2,19 @@ package synapse.dementia.domain.users.game.multiplayergame.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import synapse.dementia.domain.users.game.multiplayergame.domain.*;
-import synapse.dementia.domain.users.game.multiplayergame.repository.*;
+import synapse.dementia.domain.users.game.multiplayergame.domain.MultiGameQuestion;
+import synapse.dementia.domain.users.game.multiplayergame.domain.MultiGameResult;
+import synapse.dementia.domain.users.game.multiplayergame.domain.MultiGameRoom;
+import synapse.dementia.domain.users.game.multiplayergame.domain.MultiGameUser;
+import synapse.dementia.domain.users.game.multiplayergame.domain.MultiplayerGame;
+import synapse.dementia.domain.users.game.multiplayergame.repository.MultiGameQuestionRepository;
+import synapse.dementia.domain.users.game.multiplayergame.repository.MultiGameResultRepository;
+import synapse.dementia.domain.users.game.multiplayergame.repository.MultiGameRoomRepository;
+import synapse.dementia.domain.users.game.multiplayergame.repository.MultiGameUserRepository;
+import synapse.dementia.domain.users.game.multiplayergame.repository.MultiplayerGameRepository;
 import synapse.dementia.domain.users.member.domain.Users;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -36,7 +45,15 @@ public class MultiplayerGameService {
         MultiGameRoom room = MultiGameRoom.builder()
                 .roomName(roomName)
                 .build();
-        return roomRepository.save(room);
+        roomRepository.save(room);
+
+        // 10개의 문제 세트 생성 및 저장
+        for (int i = 0; i < 10; i++) {
+            MultiGameQuestion question = generateArithmeticQuestion(room);
+            questionRepository.save(question);
+        }
+
+        return room;
     }
 
     // 대기실에 접속
@@ -75,7 +92,7 @@ public class MultiplayerGameService {
     }
 
     // 기본적인 사칙연산 문제 생성
-    public MultiGameQuestion generateArithmeticQuestion() {
+    public MultiGameQuestion generateArithmeticQuestion(MultiGameRoom room) {
         Random rand = new Random();
         int a = rand.nextInt(10) + 1;  // 1부터 10까지의 숫자
         int b = rand.nextInt(10) + 1;  // 1부터 10까지의 숫자
@@ -146,15 +163,44 @@ public class MultiplayerGameService {
         MultiGameQuestion question = MultiGameQuestion.builder()
                 .question(questionText)
                 .answer(answerText)
+                .multiGameRoom(room)
                 .build();
-        return questionRepository.save(question);
+        return question;
     }
 
-
-    // 정답 맞히기
-    public boolean submitAnswer(Long questionId, String answer) {
+    // 정답 제출
+    public boolean submitAnswer(Long userId, Long questionId, String answer) {
         MultiGameQuestion question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid question ID"));
+        MultiGameUser user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
+        user.setAnswer(answer);
+        userRepository.save(user);
         return question.getAnswer().equals(answer);
+    }
+
+    // 사용자 순위 계산
+    public List<MultiGameResult> calculateRanking(Long roomId) {
+        MultiGameRoom room = roomRepository.findById(roomId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid room ID"));
+        List<MultiGameUser> usersInRoom = userRepository.findByMultiGameRoom(room);
+
+        List<MultiGameResult> results = new ArrayList<>();
+        for (MultiGameUser user : usersInRoom) {
+            List<MultiGameQuestion> questions = questionRepository.findByMultiGameRoom(room);
+            int correctAnswers = 0;
+            for (MultiGameQuestion question : questions) {
+                if (question.getAnswer().equals(user.getAnswer())) {
+                    correctAnswers++;
+                }
+            }
+            results.add(MultiGameResult.builder()
+                    .multiplayerGame(user.getMultiGameRoom().getMultiplayerGame())
+                    .user(user.getUser())
+                    .correctAnswer(correctAnswers)
+                    .build());
+        }
+        results.sort((r1, r2) -> r2.getCorrectAnswer() - r1.getCorrectAnswer());
+        return results;
     }
 }

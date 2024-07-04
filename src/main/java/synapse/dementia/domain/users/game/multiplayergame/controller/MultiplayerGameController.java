@@ -1,17 +1,11 @@
 package synapse.dementia.domain.users.game.multiplayergame.controller;
 
 import org.springframework.web.bind.annotation.*;
-import synapse.dementia.domain.users.game.multiplayergame.domain.MultiGameQuestion;
-import synapse.dementia.domain.users.game.multiplayergame.domain.MultiGameRoom;
-import synapse.dementia.domain.users.game.multiplayergame.domain.MultiGameUser;
-import synapse.dementia.domain.users.game.multiplayergame.domain.MultiplayerGame;
+import synapse.dementia.domain.users.game.multiplayergame.domain.*;
 import synapse.dementia.domain.users.game.multiplayergame.dto.request.CreateRoomRequest;
 import synapse.dementia.domain.users.game.multiplayergame.dto.request.JoinRoomRequest;
 import synapse.dementia.domain.users.game.multiplayergame.dto.request.SubmitAnswerRequest;
-import synapse.dementia.domain.users.game.multiplayergame.dto.response.MultiGameQuestionResponse;
-import synapse.dementia.domain.users.game.multiplayergame.dto.response.MultiGameRoomResponse;
-import synapse.dementia.domain.users.game.multiplayergame.dto.response.MultiGameUserResponse;
-import synapse.dementia.domain.users.game.multiplayergame.dto.response.MultiplayerGameResponse;
+import synapse.dementia.domain.users.game.multiplayergame.dto.response.*;
 import synapse.dementia.domain.users.game.multiplayergame.service.MultiplayerGameService;
 import synapse.dementia.domain.users.member.domain.Users;
 import synapse.dementia.domain.users.member.service.UsersService;
@@ -60,12 +54,20 @@ public class MultiplayerGameController {
 
     @GetMapping("/generate-question")
     public MultiGameQuestionResponse generateArithmeticQuestion() {
-        MultiGameQuestion question = multiplayerGameService.generateArithmeticQuestion();
+        MultiGameQuestion question = multiplayerGameService.generateArithmeticQuestion(null);
         return new MultiGameQuestionResponse(question.getQuestionIdx(), question.getQuestion(), question.getAnswer());
     }
 
     @PostMapping("/submit-answer")
     public boolean submitAnswer(@RequestBody SubmitAnswerRequest submitAnswerRequest) {
-        return multiplayerGameService.submitAnswer(submitAnswerRequest.questionId(), submitAnswerRequest.answer());
+        return multiplayerGameService.submitAnswer(submitAnswerRequest.userId(), submitAnswerRequest.questionId(), submitAnswerRequest.answer());
+    }
+
+    @GetMapping("/rankings")
+    public List<MultiGameResultResponse> getRankings(@RequestParam Long roomId) {
+        List<MultiGameResult> results = multiplayerGameService.calculateRanking(roomId);
+        return results.stream()
+                .map(result -> new MultiGameResultResponse(result.getResultIdx(), result.getMultiplayerGame().getGameIdx(), result.getUser().getUsersIdx(), result.getCorrectAnswer()))
+                .collect(Collectors.toList());
     }
 }

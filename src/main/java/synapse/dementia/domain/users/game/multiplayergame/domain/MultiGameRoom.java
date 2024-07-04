@@ -16,6 +16,8 @@ public class MultiGameRoom {
     private Long roomIdx;
 
     private String roomName;
+    @OneToOne(mappedBy = "multiGameRoom", cascade = CascadeType.ALL)
+    private MultiplayerGame multiplayerGame;
 
     @Builder
     public MultiGameRoom(String roomName){

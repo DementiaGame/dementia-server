@@ -15,7 +15,7 @@ public class MultiplayerGame extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long gameIdx;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "room_id", nullable = false)
     private MultiGameRoom multiGameRoom;
 
