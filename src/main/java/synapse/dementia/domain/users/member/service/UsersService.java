@@ -169,4 +169,9 @@ public class UsersService {
 		CustomUserDetails user = (CustomUserDetails)authentication.getPrincipal();
 		return new UsersSignInRes(user.getUsersIdx(), user.getUsername(), user.getAuthorities());
 	}
+
+	public Users findUserById(Long userId) {
+		return usersRepository.findById(userId)
+				.orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
+	}
 }

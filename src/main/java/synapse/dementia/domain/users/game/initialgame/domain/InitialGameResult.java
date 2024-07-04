@@ -15,52 +15,35 @@ import synapse.dementia.global.base.BaseEntity;
 public class InitialGameResult extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "result_id")
+    @Column(name = "result_idx")
     private Long resultIdx;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "users_idx", nullable = false)
     private Users user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "question_id", nullable = false)
-    private InitialGameQuestion question;
+    @Column(name = "total_game_score", nullable = false)
+    private Integer totalGameScore;
 
-    @Column(name = "hint_image", nullable = true)
-    private String hintImage;
-
-    @Column(name = "correct", nullable = false)
-    private Boolean correct;
-
-    @Column(name = "game_score", nullable = false)
-    private Integer gameScore;
-
-    @Column(name = "hearts", nullable = false)
-    private Integer hearts;
+    @Column(name = "total_hearts", nullable = false)
+    private Integer totalHearts;
 
     @Builder
-    public InitialGameResult(Users user, InitialGameQuestion question, String hintImage, Boolean correct, Integer gameScore, Integer hearts) {
+    public InitialGameResult(Users user, Integer totalGameScore, Integer totalHearts) {
         this.user = user;
-        this.question = question;
-        this.hintImage = hintImage;
-        this.correct = correct;
-        this.gameScore = gameScore;
-        this.hearts = hearts;
+        this.totalGameScore = totalGameScore != null ? totalGameScore : 0;
+        this.totalHearts = totalHearts != null ? totalHearts : 3;
     }
 
-    public void incrementGameScore() {
-        this.gameScore += 1;
+    public void addGameScore(Integer score) {
+        this.totalGameScore += score;
     }
 
-    public void incrementHearts() {
-        this.hearts += 1;
+    public void addHearts(Integer hearts) {
+        this.totalHearts += hearts;
     }
 
-    public void decrementHearts() {
-        this.hearts -= 1;
-    }
-
-    public void setCorrect(boolean correct) {
-        this.correct = correct;
+    public void subtractHearts(Integer hearts) {
+        this.totalHearts -= hearts;
     }
 }

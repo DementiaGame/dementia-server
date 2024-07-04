@@ -1,6 +1,11 @@
 package synapse.dementia.domain.users.member.domain;
 
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.OneToMany;
 import lombok.Setter;
+
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -14,6 +19,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import synapse.dementia.domain.users.game.initialgame.domain.SelectedGameTopic;
 import synapse.dementia.global.base.BaseEntity;
 
 @Entity
@@ -55,9 +61,12 @@ public class Users extends BaseEntity {
 	@Column(name = "role", nullable = false)
 	private Role role;
 
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<SelectedGameTopic> selectedGameTopics;
+
 	protected Users() {
 	}
-	
+
 	public Users(String nickName, String password, Integer birthYear, Gender gender, Boolean deleted, Role role) {
 		this.nickName = nickName;
 		this.password = password;
@@ -65,5 +74,11 @@ public class Users extends BaseEntity {
 		this.gender = gender;
 		this.deleted = deleted;
 		this.role = role;
+	}
+
+	public void updateUsers(Integer birthYear, Gender gender, String nickName) {
+		this.birthYear = birthYear;
+		this.gender = gender;
+		this.nickName = nickName;
 	}
 }

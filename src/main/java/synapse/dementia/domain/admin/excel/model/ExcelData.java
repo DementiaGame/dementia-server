@@ -15,7 +15,7 @@ public class ExcelData extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "excel_id")
+    @Column(name = "excel_idx")
     private Long idx;
 
     @Column(name = "topic", nullable = false)

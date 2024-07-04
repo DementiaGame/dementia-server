@@ -104,7 +104,7 @@
             white-space: pre-wrap;
             word-wrap: break-word;
             overflow-wrap: break-word;
-            max-width: 200px; /* 적절한 너비 설정 */
+            max-width: 200px;
         }
 
         .table-responsive {
@@ -126,10 +126,31 @@
         }
 
         .error-message {
-            max-width: 200px; /* 너비를 적절히 설정 */
+            max-width: 200px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+        }
+
+        .topic-menu {
+            margin-bottom: 1rem;
+            text-align: right;
+            display: none; /* 기본으로 감추기 */
+        }
+
+        .topic-menu a {
+            color: #ffffff;
+            margin: 0 5px;
+            text-decoration: none;
+        }
+
+        .topic-menu a:hover {
+            text-decoration: underline;
+        }
+
+        .topic-menu .active {
+            font-weight: bold;
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -143,179 +164,27 @@
                 <a href="#" class="nav-link" data-target="users" data-url="/admin/users">Users</a>
                 <a href="#" class="nav-link" data-target="api-success-logs" data-url="/admin/success-logs">API SUCCESS LOGS</a>
                 <a href="#" class="nav-link" data-target="api-fail-logs" data-url="/admin/error-logs">API FAIL LOGS</a>
+                <a href="#" class="nav-link" data-target="initial-game-data" data-url="/admin/initial-game">Initial Game Data</a>
             </div>
         </nav>
         <main role="main" class="col-md-10 ml-sm-auto px-4">
-            <div id="main-content" style="overflow-y: auto; height: calc(100vh - 100px);">
-                <div class="card-container">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="section-title">USERS</div>
-                            <table class="table table-striped mt-4">
-                                <thead class="thead-dark">
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Birth Year</th>
-                                    <th>Gender</th>
-                                    <th>Nick Name</th>
-                                    <th>Profile Image</th>
-                                    <th>ROLE</th>
-                                    <th>수정</th>
-                                    <th>삭제</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr th:each="user : ${users}">
-                                    <td th:text="${user.usersIdx}"></td>
-                                    <td th:text="${user.birthYear}"></td>
-                                    <td th:text="${user.gender}"></td>
-                                    <td th:text="${user.nickName}"></td>
-                                    <td th:text="${user.profileImage}"></td>
-                                    <td th:text="${user.role}"></td>
-                                    <td>
-                                        <a th:href="@{'/admin/users/edit/' + ${user.usersIdx}}" class="btn btn-primary btn-sm">수정</a>
-                                    </td>
-                                    <td>
-                                        <button class="btn btn-danger btn-sm" data-toggle="modal" th:data-target="'#deleteModal' + ${user.usersIdx}">삭제</button>
-                                        <div class="modal fade" th:id="'deleteModal' + ${user.usersIdx}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="exampleModalLabel">삭제 확인</h5>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        정말로 삭제하시겠습니까?
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
-                                                        <form th:action="@{'/admin/users/delete/' + ${user.usersIdx}}" method="post" style="display:inline;">
-                                                            <input type="hidden" name="_method" value="delete"/>
-                                                            <button type="submit" class="btn btn-danger">삭제</button>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-container">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="section-title">API Success Logs</div>
-                            <table class="table table-striped mt-4">
-                                <thead class="thead-dark">
-                                <tr>
-                                    <th>Server IP</th>
-                                    <th>Request URL</th>
-                                    <th>Request Method</th>
-                                    <th>Response Status</th>
-                                    <th>Client IP</th>
-                                    <th>Request Time</th>
-                                    <th>Response Time</th>
-                                    <th>Connection Time</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr th:each="log : ${successLogs}">
-                                    <td th:text="${log.serverIp}"></td>
-                                    <td th:text="${log.requestURL}"></td>
-                                    <td th:text="${log.requestMethod}"></td>
-                                    <td th:text="${log.responseStatus}"></td>
-                                    <td th:text="${log.clientIp}"></td>
-                                    <td th:text="${#temporals.format(log.requestTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
-                                    <td th:text="${#temporals.format(log.responseTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
-                                    <td th:text="${log.connectionTime}"></td>
-                                </tr>
-                                </tbody>
-                            </table>
-                            <nav aria-label="Page navigation">
-                                <ul class="pagination">
-                                    <li class="page-item" th:classappend="${successLogsPage.hasPrevious()} ? '': 'disabled'">
-                                        <a class="page-link" th:href="@{'/admin?page=' + ${successLogsPage.number - 1}}" aria-label="Previous">
-                                            <span aria-hidden="true">&laquo;</span>
-                                        </a>
-                                    </li>
-                                    <li class="page-item" th:each="i : ${#numbers.sequence(1, successLogsPage.totalPages)}" th:classappend="${successLogsPage.number + 1 == i} ? 'active'">
-                                        <a class="page-link" th:href="@{'/admin?page=' + ${i - 1}}" th:text="${i}">1</a>
-                                    </li>
-                                    <li class="page-item" th:classappend="${successLogsPage.hasNext()} ? '': 'disabled'">
-                                        <a class="page-link" th:href="@{'/admin?page=' + ${successLogsPage.number + 1}}" aria-label="Next">
-                                            <span aria-hidden="true">&raquo;</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </nav>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-container">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="section-title">API Error Logs</div>
-                            <table class="table table-striped">
-                                <thead class="thead-dark">
-                                <tr>
-                                    <th>Server IP</th>
-                                    <th>Request URL</th>
-                                    <th>Request Method</th>
-                                    <th>Response Status</th>
-                                    <th>Client IP</th>
-                                    <th>Request Time</th>
-                                    <th>Response Time</th>
-                                    <th>Connection Time</th>
-                                    <th>Error Message</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr th:each="log : ${errorLogs}">
-                                    <td th:text="${log.serverIp}"></td>
-                                    <td th:text="${log.requestURL}"></td>
-                                    <td th:text="${log.requestMethod}"></td>
-                                    <td th:text="${log.responseStatus}"></td>
-                                    <td th:text="${log.clientIp}"></td>
-                                    <td th:text="${#temporals.format(log.requestTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
-                                    <td th:text="${#temporals.format(log.responseTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
-                                    <td th:text="${log.connectionTime}"></td>
-                                    <td class="text-box" th:text="${log.errorMessage}"></td>
-                                </tr>
-                                </tbody>
-                            </table>
-
-                            <!-- Pagination for API Error Logs -->
-                            <nav aria-label="Page navigation">
-                                <ul class="pagination">
-                                    <li class="page-item"
-                                        th:classappend="${errorLogsPage.hasPrevious()} ? '': 'disabled'">
-                                        <a class="page-link" th:href="@{'/admin?page=' + ${errorLogsPage.number - 1}}"
-                                           aria-label="Previous">
-                                            <span aria-hidden="true">&laquo;</span>
-                                        </a>
-                                    </li>
-                                    <li class="page-item"
-                                        th:each="i : ${#numbers.sequence(1, errorLogsPage.totalPages)}"
-                                        th:classappend="${errorLogsPage.number + 1 == i} ? 'active'">
-                                        <a class="page-link" th:href="@{'/admin?page=' + ${i - 1}}" th:text="${i}">1</a>
-                                    </li>
-                                    <li class="page-item" th:classappend="${errorLogsPage.hasNext()} ? '': 'disabled'">
-                                        <a class="page-link" th:href="@{'/admin?page=' + ${errorLogsPage.number + 1}}"
-                                           aria-label="Next">
-                                            <span aria-hidden="true">&raquo;</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </nav>
-
-                        </div>
-                    </div>
-                </div>
+            <div class="topic-menu mt-3" id="topic-menu">
+                <a href="#" class="topic-link" data-topic="동물1(육지)">동물1(육지)</a>
+                <a href="#" class="topic-link" data-topic="동물2(물)">동물2(물)</a>
+                <a href="#" class="topic-link" data-topic="나무">나무</a>
+                <a href="#" class="topic-link" data-topic="야채">야채</a>
+                <a href="#" class="topic-link" data-topic="과일">과일</a>
+                <a href="#" class="topic-link" data-topic="꽃">꽃</a>
+                <a href="#" class="topic-link" data-topic="국가">국가</a>
+                <a href="#" class="topic-link" data-topic="스포츠">스포츠</a>
+                <a href="#" class="topic-link" data-topic="사자성어">사자성어</a>
+                <a href="#" class="topic-link" data-topic="직업">직업</a>
+                <a href="#" class="topic-link" data-topic="음식">음식</a>
+                <a href="#" class="topic-link" data-topic="병원,약,병">병원,약,병</a>
+                <a href="#" class="topic-link" data-topic="국내 시, 군">국내 시, 군</a>
+            </div>
+            <div id="main-content" style="overflow-y: auto; height: calc(100vh - 150px);">
+                <!-- 여기서 AJAX로 로드된 콘텐츠가 표시됩니다. -->
             </div>
         </main>
     </div>
@@ -325,15 +194,21 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script>
     $(document).ready(function () {
+        // 사이드바 메뉴 클릭 이벤트
         $('.nav-link').on('click', function (e) {
             e.preventDefault();
-            var target = $(this).data('target');
             var url = $(this).data('url');
 
             console.log("Requesting URL: " + url);
 
             $('.nav-link').removeClass('active');
             $(this).addClass('active');
+
+            if ($(this).data('target') === 'initial-game-data') {
+                $('#topic-menu').show();
+            } else {
+                $('#topic-menu').hide();
+            }
 
             $.ajax({
                 url: url,
@@ -348,7 +223,69 @@
                 }
             });
         });
+
+        // 페이지 로드 시 기본 대시보드를 표시
+        $.ajax({
+            url: '/admin/all-logs',
+            method: 'GET',
+            success: function (data) {
+                $('#main-content').html(data);
+            },
+            error: function (xhr, status, error) {
+                $('#main-content').html('<div class="alert alert-danger">Failed to load content.</div>');
+            }
+        });
+
+        // 토픽 메뉴 클릭 이벤트
+        $(document).on('click', '.topic-link', function (e) {
+            e.preventDefault();
+            var topic = $(this).data('topic');
+
+            console.log("Requesting topic: " + topic);
+
+            $('.topic-link').removeClass('active');
+            $(this).addClass('active');
+
+            $.ajax({
+                url: '/admin/initial-game',
+                method: 'GET',
+                data: { topic: topic },
+                success: function (data) {
+                    console.log("Request succeeded.");
+                    $('#main-content').html(data);
+                },
+                error: function (xhr, status, error) {
+                    console.log("Request failed. Status: " + status + ", Error: " + error);
+                    $('#main-content').html('<div class="alert alert-danger">Failed to load content.</div>');
+                }
+            });
+        });
     });
+
+    function confirmDelete(userIdx, csrfToken) {
+        const requestBody = {
+            userIdx: userIdx
+        };
+
+        fetch('/admin/dashboard/delete', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
+            },
+            body: JSON.stringify(requestBody)
+        }).then(response => {
+            if (response.ok) {
+                alert('사용자가 성공적으로 삭제되었습니다.');
+                window.location.reload();
+            } else {
+                alert('사용자 삭제 중 오류가 발생했습니다.');
+            }
+        }).catch(error => {
+            console.error('Error:', error);
+            alert('사용자 삭제 중 오류가 발생했습니다.');
+        });
+    }
 </script>
 </body>
 </html>

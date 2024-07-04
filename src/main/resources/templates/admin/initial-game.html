@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Initial Game Data</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #0b1727;
+            color: #ffffff;
+        }
+
+        .card {
+            background-color: #182b47;
+            border: none;
+            border-radius: 1rem;
+            margin: 1rem auto;
+        }
+
+        .card .card-body {
+            color: #ffffff;
+        }
+
+        .thead-dark {
+            background-color: #1a3556;
+            color: #ffffff;
+        }
+
+        .table tbody tr td {
+            color: #ffffff;
+            word-wrap: break-word;
+            white-space: normal;
+        }
+
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .table th, .table td {
+            vertical-align: middle;
+        }
+
+        .table {
+            table-layout: fixed;
+        }
+
+        .table th, .table td {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .topic-menu {
+            margin-bottom: 1rem;
+            text-align: right;
+        }
+
+        .topic-menu a {
+            color: #ffffff;
+            margin: 0 5px;
+            text-decoration: none;
+        }
+
+        .topic-menu a:hover {
+            text-decoration: underline;
+        }
+
+        .topic-menu .active {
+            font-weight: bold;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+    <div id="content">
+        <div class="card">
+            <div class="card-body">
+                <div class="section-title">
+                    Initial Game Data
+                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addModal">+</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-striped mt-4">
+                        <thead class="thead-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Topic</th>
+                            <th>Answer</th>
+                            <th>Question</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="data : ${topicData}">
+                            <td th:text="${data.idx}"></td>
+                            <td th:text="${data.topic}"></td>
+                            <td th:text="${data.answer}"></td>
+                            <td th:text="${data.question}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Modal -->
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addModalLabel">Add Game Data</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addForm">
+                    <div class="form-group">
+                        <label for="topic">Topic</label>
+                        <select class="form-control" id="topic">
+                            <option>동물1(육지)</option>
+                            <option>동물2(물)</option>
+                            <option>나무</option>
+                            <option>야채</option>
+                            <option>과일</option>
+                            <option>꽃</option>
+                            <option>국가</option>
+                            <option>스포츠</option>
+                            <option>사자성어</option>
+                            <option>직업</option>
+                            <option>음식</option>
+                            <option>병원,약,병</option>
+                            <option>국내 시, 군</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="answer">Answer</label>
+                        <input type="text" class="form-control" id="answer">
+                    </div>
+                    <div class="form-group">
+                        <label for="question">Question</label>
+                        <input type="text" class="form-control" id="question">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+                <button type="button" class="btn btn-primary" onclick="submitAddForm()">저장</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    function submitAddForm() {
+        const topic = document.querySelector('#topic').value;
+        const answer = document.querySelector('#answer').value;
+        const question = document.querySelector('#question').value;
+
+        const requestBody = {
+            topic: topic,
+            answer: answer,
+            question: question
+        };
+
+        fetch('/admin/initial-game/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody)
+        }).then(response => {
+            if (response.ok) {
+                return response.text();
+            } else {
+                throw new Error('Network response was not ok.');
+            }
+        }).then(data => {
+            alert(data);
+            window.location.reload();
+        }).catch(error => {
+            console.error('Error:', error);
+            alert('데이터 추가 중 오류가 발생했습니다.');
+        });
+    }
+</script>
+</body>
+</html>
