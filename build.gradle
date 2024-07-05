@@ -23,6 +23,7 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
     //spring
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -55,6 +56,10 @@ dependencies {
 
     // H2 DB
     runtimeOnly 'com.h2database:h2'
+
+    //웹소켓
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
 
     // 엑셀 데이터 연동 Apache POI 라이브러리
     implementation 'org.apache.poi:poi:5.2.3'
