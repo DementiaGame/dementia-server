@@ -1,5 +1,6 @@
 package synapse.dementia.domain.users.game.multiplayergame.service;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import synapse.dementia.domain.users.game.multiplayergame.domain.MultiGameQuestion;
@@ -38,6 +39,23 @@ public class MultiplayerGameService {
         this.roomRepository = roomRepository;
         this.userRepository = userRepository;
         this.gameRepository = gameRepository;
+    }
+
+    @PostConstruct
+    public void init() {
+        if (roomRepository.count() == 0) {
+            createDefaultRooms();
+        }
+    }
+
+    // 기본 방 4개 생성
+    public void createDefaultRooms() {
+        for (int i = 1; i <= 4; i++) {
+            String roomName = "대기실 " + i;
+            if (roomRepository.findByRoomName(roomName).isEmpty()) {
+                createRoom(roomName);
+            }
+        }
     }
 
     // 방 생성
