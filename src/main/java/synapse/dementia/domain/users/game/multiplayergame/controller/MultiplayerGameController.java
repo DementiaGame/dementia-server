@@ -76,4 +76,13 @@ public class MultiplayerGameController {
         MultiGameRoom room = multiplayerGameService.getRoomInfo(roomId);
         return new MultiGameRoomResponse(room.getRoomIdx(), room.getRoomName());
     }
+
+    // 방 목록을 가져오는 엔드포인트 추가
+    @GetMapping("/rooms")
+    public List<MultiGameRoomResponse> getAllRooms() {
+        List<MultiGameRoom> rooms = multiplayerGameService.getAllRooms();
+        return rooms.stream()
+                .map(room -> new MultiGameRoomResponse(room.getRoomIdx(), room.getRoomName()))
+                .collect(Collectors.toList());
+    }
 }
