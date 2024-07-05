@@ -109,6 +109,11 @@ public class MultiplayerGameService {
         return userRepository.findByMultiGameRoom(room);
     }
 
+    // 모든 방 조회
+    public List<MultiGameRoom> getAllRooms() {
+        return roomRepository.findAll();
+    }
+
     // 방 정보 조회
     public MultiGameRoom getRoomInfo(Long roomId) {
         return roomRepository.findById(roomId)
