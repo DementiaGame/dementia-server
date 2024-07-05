@@ -70,4 +70,10 @@ public class MultiplayerGameController {
                 .map(result -> new MultiGameResultResponse(result.getResultIdx(), result.getMultiplayerGame().getGameIdx(), result.getUser().getUsersIdx(), result.getCorrectAnswer()))
                 .collect(Collectors.toList());
     }
+
+    @GetMapping("/room/{roomId}")
+    public MultiGameRoomResponse getRoomInfo(@PathVariable Long roomId) {
+        MultiGameRoom room = multiplayerGameService.getRoomInfo(roomId);
+        return new MultiGameRoomResponse(room.getRoomIdx(), room.getRoomName());
+    }
 }
