@@ -91,12 +91,18 @@ public class MultiplayerGameService {
         return userRepository.findByMultiGameRoom(room);
     }
 
+    // 방 정보 조회
+    public MultiGameRoom getRoomInfo(Long roomId) {
+        return roomRepository.findById(roomId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid room ID"));
+    }
+
     // 기본적인 사칙연산 문제 생성
     public MultiGameQuestion generateArithmeticQuestion(MultiGameRoom room) {
         Random rand = new Random();
-        int a = rand.nextInt(10) + 1;  // 1부터 10까지의 숫자
-        int b = rand.nextInt(10) + 1;  // 1부터 10까지의 숫자
-        int c = rand.nextInt(10) + 1;  // 1부터 10까지의 숫자
+        int a = rand.nextInt(10) + 1;
+        int b = rand.nextInt(10) + 1;
+        int c = rand.nextInt(10) + 1;
         char[] operations = {'+', '-', '*', '/'};
         char operation1 = operations[rand.nextInt(operations.length)];
         char operation2 = operations[rand.nextInt(operations.length)];
@@ -117,7 +123,6 @@ public class MultiplayerGameService {
                 intermediateResult = a * b;
                 break;
             case '/':
-                // 나눗셈의 경우 나머지가 없는 문제만 출제
                 while (b == 0 || a % b != 0) {
                     b = rand.nextInt(10) + 1;
                     a = b * (rand.nextInt(10) + 1);
@@ -139,7 +144,6 @@ public class MultiplayerGameService {
                 questionText = intermediateResult + " " + operation2 + " " + c;
                 break;
             case '*':
-                // 두 자리 수끼리의 곱셈은 제외
                 while (c > 10) {
                     c = rand.nextInt(10) + 1;
                 }
@@ -147,7 +151,6 @@ public class MultiplayerGameService {
                 questionText = intermediateResult + " " + operation2 + " " + c;
                 break;
             case '/':
-                // 나눗셈의 경우 나머지가 없는 문제만 출제
                 while (c == 0 || intermediateResult % c != 0) {
                     c = rand.nextInt(10) + 1;
                 }
