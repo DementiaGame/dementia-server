@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import synapse.dementia.domain.admin.excel.model.ExcelData;
 import synapse.dementia.domain.admin.initialGame.dto.request.AddInitialGameDataReq;
 import synapse.dementia.domain.admin.initialGame.service.InitialGameService;
+import synapse.dementia.global.exception.ConflictException;
 
 @Controller
 @RequiredArgsConstructor
@@ -48,8 +49,11 @@ public class InitialGameController {
 		try {
 			initialGameService.addInitialGameData(addInitialGameDataReq);
 			return new ResponseEntity<>("데이터가 성공적으로 추가됐습니다.", headers, HttpStatus.OK);
+		} catch (ConflictException e) {
+			return new ResponseEntity<>("이미 저장되어 있는 데이터입니다.", headers, HttpStatus.CONFLICT);
 		} catch (Exception e) {
-			return new ResponseEntity<>("데이터 추가 중 오류가 발생했습니다.", headers, HttpStatus.INTERNAL_SERVER_ERROR);
+			String errorMessage = "데이터 추가 중 오류가 발생했습니다: " + e.getMessage();
+			return new ResponseEntity<>(errorMessage, headers, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 }
