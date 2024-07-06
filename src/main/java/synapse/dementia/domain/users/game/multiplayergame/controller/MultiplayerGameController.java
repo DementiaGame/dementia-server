@@ -1,5 +1,8 @@
 package synapse.dementia.domain.users.game.multiplayergame.controller;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import synapse.dementia.domain.users.game.multiplayergame.domain.*;
 import synapse.dementia.domain.users.game.multiplayergame.dto.request.CreateRoomRequest;
@@ -19,10 +22,12 @@ public class MultiplayerGameController {
 
     private final MultiplayerGameService multiplayerGameService;
     private final UsersService usersService;
+    private final SimpMessagingTemplate messagingTemplate;
 
-    public MultiplayerGameController(MultiplayerGameService multiplayerGameService, UsersService usersService) {
+    public MultiplayerGameController(MultiplayerGameService multiplayerGameService, UsersService usersService, SimpMessagingTemplate messagingTemplate) {
         this.multiplayerGameService = multiplayerGameService;
         this.usersService = usersService;
+        this.messagingTemplate = messagingTemplate;
     }
 
     @PostMapping("/create-room")
@@ -32,10 +37,21 @@ public class MultiplayerGameController {
     }
 
     @PostMapping("/join-room")
-    public MultiGameUserResponse joinRoom(@RequestBody JoinRoomRequest joinRoomRequest) {
-        Users user = usersService.findUserById(joinRoomRequest.userId());
-        MultiGameUser gameUser = multiplayerGameService.joinRoom(joinRoomRequest.roomId(), user);
-        return new MultiGameUserResponse(gameUser.getIdx(), gameUser.getMultiGameRoom().getRoomIdx(), gameUser.getUser().getUsersIdx());
+    public ResponseEntity<?> joinRoom(@RequestBody JoinRoomRequest joinRoomRequest) {
+        Long roomId = joinRoomRequest.roomId();
+        Long userId = joinRoomRequest.userId();
+
+        if (multiplayerGameService.isUserInRoom(roomId, userId)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("User already in room");
+        }
+
+        Users user = usersService.findUserById(userId);
+        MultiGameUser gameUser = multiplayerGameService.joinRoom(roomId, user);
+
+        MultiGameUserResponse response = new MultiGameUserResponse(gameUser.getIdx(), gameUser.getMultiGameRoom().getRoomIdx(), gameUser.getUser().getUsersIdx());
+        messagingTemplate.convertAndSend("/topic/room/" + roomId, response);
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/room-users")
@@ -77,7 +93,6 @@ public class MultiplayerGameController {
         return new MultiGameRoomResponse(room.getRoomIdx(), room.getRoomName());
     }
 
-    // 방 목록을 가져오는 엔드포인트 추가
     @GetMapping("/rooms")
     public List<MultiGameRoomResponse> getAllRooms() {
         List<MultiGameRoom> rooms = multiplayerGameService.getAllRooms();

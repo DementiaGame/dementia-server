@@ -48,6 +48,12 @@ public class MultiplayerGameService {
         }
     }
 
+    //중복 ID 못들어가도록
+    public boolean isUserInRoom(Long roomId, Long userId) {
+        List<MultiGameUser> usersInRoom = getUsersInRoom(roomId);
+        return usersInRoom.stream().anyMatch(user -> user.getUser().getUsersIdx().equals(userId));
+    }
+
     // 기본 방 4개 생성
     public void createDefaultRooms() {
         for (int i = 1; i <= 4; i++) {
@@ -76,6 +82,9 @@ public class MultiplayerGameService {
 
     // 대기실에 접속
     public MultiGameUser joinRoom(Long roomId, Users user) {
+        if (isUserInRoom(roomId, user.getUsersIdx())) {
+            throw new IllegalStateException("User is already in the room");
+        }
         MultiGameRoom room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid room ID"));
         MultiGameUser gameUser = MultiGameUser.builder()
