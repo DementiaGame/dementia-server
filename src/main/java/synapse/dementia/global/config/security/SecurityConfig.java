@@ -85,7 +85,7 @@ public class SecurityConfig {
 					.FrameOptionsConfig::sameOrigin)
 			)
 			.authorizeHttpRequests(authorize -> authorize
-				.requestMatchers("/**", "/users/signup", "/users/signin", "/admin/**").permitAll()
+				.requestMatchers("/**", "/users/signup", "/users/signin", "/admin/**","/ws/**").permitAll()
 				// .requestMatchers("/admin/**").hasRole(Role.ROLE_ADMIN.name())
 				.anyRequest().authenticated())
 			// authentication Manager를 controller에서 호출
