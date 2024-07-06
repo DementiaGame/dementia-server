@@ -11,6 +11,7 @@ import synapse.dementia.domain.users.member.service.UsersService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -115,8 +116,15 @@ public class MultiplayerGameService {
     public MultiplayerGame startGame(Long roomId) {
         MultiGameRoom room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid room ID"));
-        List<MultiGameUser> usersInRoom = userRepository.findByMultiGameRoom(room);
 
+        // Check if there is already a started game for this room
+        Optional<MultiplayerGame> existingGame = gameRepository.findByMultiGameRoomAndIsStarted(room, true);
+        if (existingGame.isPresent()) {
+            // Delete or reset the existing game
+            gameRepository.delete(existingGame.get());
+        }
+
+        List<MultiGameUser> usersInRoom = userRepository.findByMultiGameRoom(room);
         if (usersInRoom.size() < 2) {
             throw new IllegalStateException("At least 2 users required to start the game");
         }
