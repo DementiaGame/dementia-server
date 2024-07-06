@@ -1,7 +1,5 @@
 package synapse.dementia.domain.users.game.multiplayergame.controller;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import synapse.dementia.domain.users.game.multiplayergame.domain.*;
@@ -41,35 +39,21 @@ public class MultiplayerGameController {
         Users user = usersService.findUserById(joinRoomRequest.userId());
         MultiGameUser gameUser = multiplayerGameService.joinRoom(joinRoomRequest.roomId(), user);
 
-        List<MultiGameUser> usersInRoom = multiplayerGameService.getUsersInRoom(joinRoomRequest.roomId());
-        List<MultiGameUserResponse> response = usersInRoom.stream()
-                .map(u -> new MultiGameUserResponse(u.getIdx(), u.getMultiGameRoom().getRoomIdx(), u.getUser().getUsersIdx()))
-                .collect(Collectors.toList());
+        MultiGameUserResponse response = new MultiGameUserResponse(gameUser.getIdx(), gameUser.getMultiGameRoom().getRoomIdx(), gameUser.getUser().getUsersIdx());
+        messagingTemplate.convertAndSend("/topic/room/" + joinRoomRequest.roomId(), multiplayerGameService.getUsersInRoom(joinRoomRequest.roomId()));
 
-        messagingTemplate.convertAndSend("/topic/room/" + joinRoomRequest.roomId(), response);
-
-        return new MultiGameUserResponse(gameUser.getIdx(), gameUser.getMultiGameRoom().getRoomIdx(), gameUser.getUser().getUsersIdx());
+        return response;
     }
 
     @PostMapping("/leave-room")
-    public void leaveRoom(@RequestBody JoinRoomRequest leaveRoomRequest) {
-        Users user = usersService.findUserById(leaveRoomRequest.userId());
-        multiplayerGameService.leaveRoom(leaveRoomRequest.roomId(), user);
-
-        List<MultiGameUser> usersInRoom = multiplayerGameService.getUsersInRoom(leaveRoomRequest.roomId());
-        List<MultiGameUserResponse> response = usersInRoom.stream()
-                .map(u -> new MultiGameUserResponse(u.getIdx(), u.getMultiGameRoom().getRoomIdx(), u.getUser().getUsersIdx()))
-                .collect(Collectors.toList());
-
-        messagingTemplate.convertAndSend("/topic/room/" + leaveRoomRequest.roomId(), response);
+    public void leaveRoom(@RequestBody JoinRoomRequest joinRoomRequest) {
+        multiplayerGameService.leaveRoom(joinRoomRequest.roomId(), joinRoomRequest.userId());
+        messagingTemplate.convertAndSend("/topic/room/" + joinRoomRequest.roomId(), multiplayerGameService.getUsersInRoom(joinRoomRequest.roomId()));
     }
 
     @GetMapping("/room-users")
     public List<MultiGameUserResponse> getUsersInRoom(@RequestParam Long roomId) {
-        List<MultiGameUser> usersInRoom = multiplayerGameService.getUsersInRoom(roomId);
-        return usersInRoom.stream()
-                .map(user -> new MultiGameUserResponse(user.getIdx(), user.getMultiGameRoom().getRoomIdx(), user.getUser().getUsersIdx()))
-                .collect(Collectors.toList());
+        return multiplayerGameService.getUsersInRoom(roomId);
     }
 
     @PostMapping("/start-game")

@@ -3,21 +3,16 @@ package synapse.dementia.domain.users.game.multiplayergame.service;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import synapse.dementia.domain.users.game.multiplayergame.domain.MultiGameQuestion;
-import synapse.dementia.domain.users.game.multiplayergame.domain.MultiGameResult;
-import synapse.dementia.domain.users.game.multiplayergame.domain.MultiGameRoom;
-import synapse.dementia.domain.users.game.multiplayergame.domain.MultiGameUser;
-import synapse.dementia.domain.users.game.multiplayergame.domain.MultiplayerGame;
-import synapse.dementia.domain.users.game.multiplayergame.repository.MultiGameQuestionRepository;
-import synapse.dementia.domain.users.game.multiplayergame.repository.MultiGameResultRepository;
-import synapse.dementia.domain.users.game.multiplayergame.repository.MultiGameRoomRepository;
-import synapse.dementia.domain.users.game.multiplayergame.repository.MultiGameUserRepository;
-import synapse.dementia.domain.users.game.multiplayergame.repository.MultiplayerGameRepository;
+import synapse.dementia.domain.users.game.multiplayergame.domain.*;
+import synapse.dementia.domain.users.game.multiplayergame.dto.response.MultiGameUserResponse;
+import synapse.dementia.domain.users.game.multiplayergame.repository.*;
 import synapse.dementia.domain.users.member.domain.Users;
+import synapse.dementia.domain.users.member.service.UsersService;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -28,17 +23,20 @@ public class MultiplayerGameService {
     private final MultiGameRoomRepository roomRepository;
     private final MultiGameUserRepository userRepository;
     private final MultiplayerGameRepository gameRepository;
+    private final UsersService usersService;
 
     public MultiplayerGameService(MultiGameQuestionRepository questionRepository,
                                   MultiGameResultRepository resultRepository,
                                   MultiGameRoomRepository roomRepository,
                                   MultiGameUserRepository userRepository,
-                                  MultiplayerGameRepository gameRepository) {
+                                  MultiplayerGameRepository gameRepository,
+                                  UsersService usersService) {
         this.questionRepository = questionRepository;
         this.resultRepository = resultRepository;
         this.roomRepository = roomRepository;
         this.userRepository = userRepository;
         this.gameRepository = gameRepository;
+        this.usersService = usersService;
     }
 
     @PostConstruct
@@ -48,9 +46,9 @@ public class MultiplayerGameService {
         }
     }
 
-    //중복 ID 못들어가도록
+    // 중복 ID 못들어가도록
     public boolean isUserInRoom(Long roomId, Long userId) {
-        List<MultiGameUser> usersInRoom = getUsersInRoom(roomId);
+        List<MultiGameUser> usersInRoom = userRepository.findByMultiGameRoomId(roomId);
         return usersInRoom.stream().anyMatch(user -> user.getUser().getUsersIdx().equals(userId));
     }
 
@@ -103,14 +101,25 @@ public class MultiplayerGameService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found in room"));
     }
 
-    public void leaveRoom(Long roomId, Users user) {
+    public void leaveRoom(Long roomId, Long userId) {
         MultiGameRoom room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid room ID"));
-
+        Users user = usersService.findUserById(userId);
         MultiGameUser gameUser = userRepository.findByMultiGameRoomAndUser(room, user)
-                .orElseThrow(() -> new IllegalArgumentException("User not found in room"));
+                .orElseThrow(() -> new IllegalArgumentException("User not found in the room"));
 
         userRepository.delete(gameUser);
+    }
+
+    // 방에 있는 사용자들 조회
+    public List<MultiGameUserResponse> getUsersInRoom(Long roomId) {
+        MultiGameRoom room = roomRepository.findById(roomId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid room ID"));
+        List<MultiGameUser> usersInRoom = userRepository.findByMultiGameRoom(room);
+
+        return usersInRoom.stream()
+                .map(user -> new MultiGameUserResponse(user.getIdx(), user.getMultiGameRoom().getRoomIdx(), user.getUser().getUsersIdx()))
+                .collect(Collectors.toList());
     }
 
     // 대기실에 사람이 2명 이상이면 게임 시작
@@ -130,22 +139,15 @@ public class MultiplayerGameService {
         return gameRepository.save(game);
     }
 
-    // 방에 있는 사용자들 조회
-    public List<MultiGameUser> getUsersInRoom(Long roomId) {
-        MultiGameRoom room = roomRepository.findById(roomId)
+    // 방 정보 조회
+    public MultiGameRoom getRoomInfo(Long roomId) {
+        return roomRepository.findById(roomId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid room ID"));
-        return userRepository.findByMultiGameRoom(room);
     }
 
     // 모든 방 조회
     public List<MultiGameRoom> getAllRooms() {
         return roomRepository.findAll();
-    }
-
-    // 방 정보 조회
-    public MultiGameRoom getRoomInfo(Long roomId) {
-        return roomRepository.findById(roomId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid room ID"));
     }
 
     // 기본적인 사칙연산 문제 생성

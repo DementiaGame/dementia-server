@@ -4,14 +4,28 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import synapse.dementia.domain.users.game.multiplayergame.dto.response.MultiGameUserResponse;
+import synapse.dementia.domain.users.game.multiplayergame.service.MultiplayerGameService;
+import synapse.dementia.domain.users.member.service.UsersService;
+import synapse.dementia.domain.users.member.domain.Users;
+
+import java.util.List;
 
 @Controller
 public class WebSocketController {
 
+    private final MultiplayerGameService multiplayerGameService;
+    private final UsersService usersService;
+
+    public WebSocketController(MultiplayerGameService multiplayerGameService, UsersService usersService) {
+        this.multiplayerGameService = multiplayerGameService;
+        this.usersService = usersService;
+    }
+
     @MessageMapping("/join")
     @SendTo("/topic/room")
-    public MultiGameUserResponse joinRoom(MultiGameUserResponse user) {
-        // 로직 추가: 사용자 방에 추가
-        return user; // 모든 클라이언트에게 전송
+    public List<MultiGameUserResponse> joinRoom(MultiGameUserResponse user) {
+        Users existingUser = usersService.findUserById(user.usersIdx());
+        multiplayerGameService.joinRoom(user.roomIdx(), existingUser);
+        return multiplayerGameService.getUsersInRoom(user.roomIdx());
     }
 }
