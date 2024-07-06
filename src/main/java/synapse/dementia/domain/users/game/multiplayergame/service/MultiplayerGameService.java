@@ -23,14 +23,14 @@ public class MultiplayerGameService {
     private final MultiGameRoomRepository roomRepository;
     private final MultiGameUserRepository userRepository;
     private final MultiplayerGameRepository gameRepository;
+
     private final UsersService usersService;
 
     public MultiplayerGameService(MultiGameQuestionRepository questionRepository,
                                   MultiGameResultRepository resultRepository,
                                   MultiGameRoomRepository roomRepository,
                                   MultiGameUserRepository userRepository,
-                                  MultiplayerGameRepository gameRepository,
-                                  UsersService usersService) {
+                                  MultiplayerGameRepository gameRepository, UsersService usersService) {
         this.questionRepository = questionRepository;
         this.resultRepository = resultRepository;
         this.roomRepository = roomRepository;
@@ -46,10 +46,10 @@ public class MultiplayerGameService {
         }
     }
 
-    // 중복 ID 못들어가도록
+    //중복 ID 못들어가도록
     public boolean isUserInRoom(Long roomId, Long userId) {
-        List<MultiGameUser> usersInRoom = userRepository.findByMultiGameRoomRoomIdx(roomId);
-        return usersInRoom.stream().anyMatch(user -> user.getUser().getUsersIdx().equals(userId));
+        List<MultiGameUserResponse> usersInRoom = getUsersInRoom(roomId);
+        return usersInRoom.stream().anyMatch(user -> user.usersIdx().equals(userId));
     }
 
     // 기본 방 4개 생성
@@ -111,17 +111,6 @@ public class MultiplayerGameService {
         userRepository.delete(gameUser);
     }
 
-    // 방에 있는 사용자들 조회
-    public List<MultiGameUserResponse> getUsersInRoom(Long roomId) {
-        MultiGameRoom room = roomRepository.findById(roomId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid room ID"));
-        List<MultiGameUser> usersInRoom = userRepository.findByMultiGameRoom(room);
-
-        return usersInRoom.stream()
-                .map(user -> new MultiGameUserResponse(user.getIdx(), user.getMultiGameRoom().getRoomIdx(), user.getUser().getUsersIdx()))
-                .collect(Collectors.toList());
-    }
-
     // 대기실에 사람이 2명 이상이면 게임 시작
     public MultiplayerGame startGame(Long roomId) {
         MultiGameRoom room = roomRepository.findById(roomId)
@@ -139,15 +128,26 @@ public class MultiplayerGameService {
         return gameRepository.save(game);
     }
 
-    // 방 정보 조회
-    public MultiGameRoom getRoomInfo(Long roomId) {
-        return roomRepository.findById(roomId)
+    // 방에 있는 사용자들 조회
+    public List<MultiGameUserResponse> getUsersInRoom(Long roomId) {
+        MultiGameRoom room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid room ID"));
+        List<MultiGameUser> usersInRoom = userRepository.findByMultiGameRoom(room);
+
+        return usersInRoom.stream()
+                .map(user -> new MultiGameUserResponse(user.getIdx(), user.getMultiGameRoom().getRoomIdx(), user.getUser().getUsersIdx(), user.getUser().getNickName()))
+                .collect(Collectors.toList());
     }
 
     // 모든 방 조회
     public List<MultiGameRoom> getAllRooms() {
         return roomRepository.findAll();
+    }
+
+    // 방 정보 조회
+    public MultiGameRoom getRoomInfo(Long roomId) {
+        return roomRepository.findById(roomId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid room ID"));
     }
 
     // 기본적인 사칙연산 문제 생성
@@ -242,6 +242,8 @@ public class MultiplayerGameService {
         List<MultiGameUser> usersInRoom = userRepository.findByMultiGameRoom(room);
 
         List<MultiGameResult> results = new ArrayList<>();
+        MultiplayerGame game = room.getMultiplayerGame(); // 게임 객체 설정
+
         for (MultiGameUser user : usersInRoom) {
             List<MultiGameQuestion> questions = questionRepository.findByMultiGameRoom(room);
             int correctAnswers = 0;
@@ -251,7 +253,7 @@ public class MultiplayerGameService {
                 }
             }
             results.add(MultiGameResult.builder()
-                    .multiplayerGame(user.getMultiGameRoom().getMultiplayerGame())
+                    .multiplayerGame(game)
                     .user(user.getUser())
                     .correctAnswer(correctAnswers)
                     .build());
@@ -259,4 +261,5 @@ public class MultiplayerGameService {
         results.sort((r1, r2) -> r2.getCorrectAnswer() - r1.getCorrectAnswer());
         return results;
     }
+
 }

@@ -39,7 +39,7 @@ public class MultiplayerGameController {
         Users user = usersService.findUserById(joinRoomRequest.userId());
         MultiGameUser gameUser = multiplayerGameService.joinRoom(joinRoomRequest.roomId(), user);
 
-        MultiGameUserResponse response = new MultiGameUserResponse(gameUser.getIdx(), gameUser.getMultiGameRoom().getRoomIdx(), gameUser.getUser().getUsersIdx());
+        MultiGameUserResponse response = new MultiGameUserResponse(gameUser.getIdx(), gameUser.getMultiGameRoom().getRoomIdx(), gameUser.getUser().getUsersIdx(), gameUser.getUser().getNickName());
         messagingTemplate.convertAndSend("/topic/room/" + joinRoomRequest.roomId(), multiplayerGameService.getUsersInRoom(joinRoomRequest.roomId()));
 
         return response;

@@ -11,8 +11,6 @@ import java.util.Optional;
 public interface MultiGameUserRepository extends JpaRepository<MultiGameUser, Long> {
     List<MultiGameUser> findByMultiGameRoom(MultiGameRoom room);
     Optional<MultiGameUser> findByMultiGameRoomAndUser(MultiGameRoom room, Users user);
-    List<MultiGameUser> findByMultiGameRoomRoomIdx(Long roomIdx); // 수정된 메소드 이름
-
 
 }
 
