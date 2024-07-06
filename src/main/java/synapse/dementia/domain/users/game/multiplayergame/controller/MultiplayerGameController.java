@@ -12,6 +12,7 @@ import synapse.dementia.domain.users.member.domain.Users;
 import synapse.dementia.domain.users.member.service.UsersService;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -57,7 +58,8 @@ public class MultiplayerGameController {
     }
 
     @PostMapping("/start-game")
-    public MultiplayerGameResponse startGame(@RequestParam Long roomId) {
+    public MultiplayerGameResponse startGame(@RequestBody Map<String, Long> requestBody) {
+        Long roomId = requestBody.get("roomId");
         MultiplayerGame game = multiplayerGameService.startGame(roomId);
         return new MultiplayerGameResponse(game.getGameIdx(), game.getMultiGameRoom().getRoomIdx(), game.isStarted());
     }
