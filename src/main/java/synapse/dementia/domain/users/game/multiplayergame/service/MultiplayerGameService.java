@@ -82,16 +82,35 @@ public class MultiplayerGameService {
 
     // 대기실에 접속
     public MultiGameUser joinRoom(Long roomId, Users user) {
-        if (isUserInRoom(roomId, user.getUsersIdx())) {
-            throw new IllegalStateException("User is already in the room");
-        }
         MultiGameRoom room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid room ID"));
-        MultiGameUser gameUser = MultiGameUser.builder()
-                .multiGameRoom(room)
-                .user(user)
-                .build();
-        return userRepository.save(gameUser);
+
+        List<MultiGameUser> usersInRoom = userRepository.findByMultiGameRoom(room);
+        boolean userExists = usersInRoom.stream()
+                .anyMatch(gameUser -> gameUser.getUser().getUsersIdx().equals(user.getUsersIdx()));
+
+        if (!userExists) {
+            MultiGameUser gameUser = MultiGameUser.builder()
+                    .multiGameRoom(room)
+                    .user(user)
+                    .build();
+            return userRepository.save(gameUser);
+        }
+
+        return usersInRoom.stream()
+                .filter(gameUser -> gameUser.getUser().getUsersIdx().equals(user.getUsersIdx()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("User not found in room"));
+    }
+
+    public void leaveRoom(Long roomId, Users user) {
+        MultiGameRoom room = roomRepository.findById(roomId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid room ID"));
+
+        MultiGameUser gameUser = userRepository.findByMultiGameRoomAndUser(room, user)
+                .orElseThrow(() -> new IllegalArgumentException("User not found in room"));
+
+        userRepository.delete(gameUser);
     }
 
     // 대기실에 사람이 2명 이상이면 게임 시작

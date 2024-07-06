@@ -37,21 +37,31 @@ public class MultiplayerGameController {
     }
 
     @PostMapping("/join-room")
-    public ResponseEntity<?> joinRoom(@RequestBody JoinRoomRequest joinRoomRequest) {
-        Long roomId = joinRoomRequest.roomId();
-        Long userId = joinRoomRequest.userId();
+    public MultiGameUserResponse joinRoom(@RequestBody JoinRoomRequest joinRoomRequest) {
+        Users user = usersService.findUserById(joinRoomRequest.userId());
+        MultiGameUser gameUser = multiplayerGameService.joinRoom(joinRoomRequest.roomId(), user);
 
-        if (multiplayerGameService.isUserInRoom(roomId, userId)) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("User already in room");
-        }
+        List<MultiGameUser> usersInRoom = multiplayerGameService.getUsersInRoom(joinRoomRequest.roomId());
+        List<MultiGameUserResponse> response = usersInRoom.stream()
+                .map(u -> new MultiGameUserResponse(u.getIdx(), u.getMultiGameRoom().getRoomIdx(), u.getUser().getUsersIdx()))
+                .collect(Collectors.toList());
 
-        Users user = usersService.findUserById(userId);
-        MultiGameUser gameUser = multiplayerGameService.joinRoom(roomId, user);
+        messagingTemplate.convertAndSend("/topic/room/" + joinRoomRequest.roomId(), response);
 
-        MultiGameUserResponse response = new MultiGameUserResponse(gameUser.getIdx(), gameUser.getMultiGameRoom().getRoomIdx(), gameUser.getUser().getUsersIdx());
-        messagingTemplate.convertAndSend("/topic/room/" + roomId, response);
+        return new MultiGameUserResponse(gameUser.getIdx(), gameUser.getMultiGameRoom().getRoomIdx(), gameUser.getUser().getUsersIdx());
+    }
 
-        return ResponseEntity.ok(response);
+    @PostMapping("/leave-room")
+    public void leaveRoom(@RequestBody JoinRoomRequest leaveRoomRequest) {
+        Users user = usersService.findUserById(leaveRoomRequest.userId());
+        multiplayerGameService.leaveRoom(leaveRoomRequest.roomId(), user);
+
+        List<MultiGameUser> usersInRoom = multiplayerGameService.getUsersInRoom(leaveRoomRequest.roomId());
+        List<MultiGameUserResponse> response = usersInRoom.stream()
+                .map(u -> new MultiGameUserResponse(u.getIdx(), u.getMultiGameRoom().getRoomIdx(), u.getUser().getUsersIdx()))
+                .collect(Collectors.toList());
+
+        messagingTemplate.convertAndSend("/topic/room/" + leaveRoomRequest.roomId(), response);
     }
 
     @GetMapping("/room-users")
