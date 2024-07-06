@@ -11,6 +11,8 @@ import java.util.Optional;
 public interface MultiGameUserRepository extends JpaRepository<MultiGameUser, Long> {
     List<MultiGameUser> findByMultiGameRoom(MultiGameRoom room);
     Optional<MultiGameUser> findByMultiGameRoomAndUser(MultiGameRoom room, Users user);
+    List<MultiGameUser> findByMultiGameRoomId(Long roomId);
+
 
 }
 
