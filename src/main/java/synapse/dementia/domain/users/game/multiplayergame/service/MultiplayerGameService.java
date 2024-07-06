@@ -48,7 +48,7 @@ public class MultiplayerGameService {
 
     // 중복 ID 못들어가도록
     public boolean isUserInRoom(Long roomId, Long userId) {
-        List<MultiGameUser> usersInRoom = userRepository.findByMultiGameRoomId(roomId);
+        List<MultiGameUser> usersInRoom = userRepository.findByMultiGameRoomRoomIdx(roomId);
         return usersInRoom.stream().anyMatch(user -> user.getUser().getUsersIdx().equals(userId));
     }
 
