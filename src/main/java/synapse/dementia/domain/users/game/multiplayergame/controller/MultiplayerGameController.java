@@ -1,5 +1,7 @@
 package synapse.dementia.domain.users.game.multiplayergame.controller;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import synapse.dementia.domain.users.game.multiplayergame.domain.*;
@@ -58,10 +60,18 @@ public class MultiplayerGameController {
     }
 
     @PostMapping("/start-game")
-    public MultiplayerGameResponse startGame(@RequestBody Map<String, Long> requestBody) {
-        Long roomId = requestBody.get("roomId");
-        MultiplayerGame game = multiplayerGameService.startGame(roomId);
-        return new MultiplayerGameResponse(game.getGameIdx(), game.getMultiGameRoom().getRoomIdx(), game.isStarted());
+    public ResponseEntity<?> startGame(@RequestBody Map<String, Long> requestBody) {
+        try {
+            Long roomId = requestBody.get("roomId");
+            MultiplayerGame game = multiplayerGameService.startGame(roomId);
+            return ResponseEntity.ok(new MultiplayerGameResponse(game.getGameIdx(), game.getMultiGameRoom().getRoomIdx(), game.isStarted()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid room ID");
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("At least 2 users required to start the game");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unknown Exception: " + e.getMessage());
+        }
     }
 
     @GetMapping("/generate-question")
