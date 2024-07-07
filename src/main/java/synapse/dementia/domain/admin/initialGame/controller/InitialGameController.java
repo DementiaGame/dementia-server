@@ -1,7 +1,10 @@
 package synapse.dementia.domain.admin.initialGame.controller;
 
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -14,11 +17,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.RequiredArgsConstructor;
 import synapse.dementia.domain.admin.excel.model.ExcelData;
 import synapse.dementia.domain.admin.initialGame.dto.request.AddInitialGameDataReq;
 import synapse.dementia.domain.admin.initialGame.service.InitialGameService;
+import synapse.dementia.domain.users.game.initialgame.domain.InitialGameQuestion;
 import synapse.dementia.global.exception.ConflictException;
 
 @Controller
@@ -55,5 +60,30 @@ public class InitialGameController {
 			String errorMessage = "데이터 추가 중 오류가 발생했습니다: " + e.getMessage();
 			return new ResponseEntity<>(errorMessage, headers, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+	}
+
+	@GetMapping("/visualization")
+	public String getAnswerWordFrequency(Model model) {
+		List<InitialGameQuestion> questions = initialGameService.getAllInitialGameData();
+		Map<String, Long> answerWordFrequency = questions.stream()
+			.collect(Collectors.groupingBy(InitialGameQuestion::getAnswerWord, Collectors.counting()));
+
+		Map<String, Double> answerWordCorrectRate = questions.stream()
+			.collect(Collectors.groupingBy(InitialGameQuestion::getAnswerWord,
+				Collectors.averagingDouble(q -> q.getCorrect() ? 1 : 0)));
+
+		List<Map<String, Object>> answerWordStats = answerWordFrequency.entrySet().stream()
+			.map(entry -> {
+				Map<String, Object> stats = new HashMap<>();
+				stats.put("word", entry.getKey());
+				stats.put("frequency", entry.getValue());
+				stats.put("correctRate", String.format("%.2f", answerWordCorrectRate.get(entry.getKey()) * 100)); // 포맷팅
+				return stats;
+			})
+			.collect(Collectors.toList());
+
+		model.addAttribute("answerWordStats", answerWordStats);
+
+		return "admin/answer-word-frequency";
 	}
 }

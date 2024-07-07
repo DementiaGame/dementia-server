@@ -10,6 +10,8 @@ import synapse.dementia.domain.admin.excel.model.ExcelData;
 import synapse.dementia.domain.admin.excel.repository.ExcelDataRepository;
 import synapse.dementia.domain.admin.initialGame.dto.request.AddInitialGameDataReq;
 import synapse.dementia.domain.admin.initialGame.repository.InitialGameRepository;
+import synapse.dementia.domain.users.game.initialgame.domain.InitialGameQuestion;
+import synapse.dementia.domain.users.game.initialgame.repository.InitialGameQuestionRepository;
 import synapse.dementia.global.exception.ConflictException;
 import synapse.dementia.global.exception.ErrorResult;
 
@@ -18,6 +20,7 @@ import synapse.dementia.global.exception.ErrorResult;
 public class InitialGameServiceImpl implements InitialGameService {
 	private final InitialGameRepository initialGameRepository;
 	private final ExcelDataRepository excelDataRepository;
+	private final InitialGameQuestionRepository initialGameQuestionRepository;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -43,5 +46,10 @@ public class InitialGameServiceImpl implements InitialGameService {
 			.build();
 
 		excelDataRepository.save(excelData);
+	}
+
+	@Override
+	public List<InitialGameQuestion> getAllInitialGameData() {
+		return initialGameQuestionRepository.findAll();
 	}
 }
