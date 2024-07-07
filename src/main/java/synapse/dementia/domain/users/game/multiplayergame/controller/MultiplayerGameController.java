@@ -1,5 +1,8 @@
 package synapse.dementia.domain.users.game.multiplayergame.controller;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import synapse.dementia.domain.users.game.multiplayergame.domain.*;
 import synapse.dementia.domain.users.game.multiplayergame.dto.request.CreateRoomRequest;
@@ -11,6 +14,7 @@ import synapse.dementia.domain.users.member.domain.Users;
 import synapse.dementia.domain.users.member.service.UsersService;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -19,10 +23,12 @@ public class MultiplayerGameController {
 
     private final MultiplayerGameService multiplayerGameService;
     private final UsersService usersService;
+    private final SimpMessagingTemplate messagingTemplate;
 
-    public MultiplayerGameController(MultiplayerGameService multiplayerGameService, UsersService usersService) {
+    public MultiplayerGameController(MultiplayerGameService multiplayerGameService, UsersService usersService, SimpMessagingTemplate messagingTemplate) {
         this.multiplayerGameService = multiplayerGameService;
         this.usersService = usersService;
+        this.messagingTemplate = messagingTemplate;
     }
 
     @PostMapping("/create-room")
@@ -35,21 +41,37 @@ public class MultiplayerGameController {
     public MultiGameUserResponse joinRoom(@RequestBody JoinRoomRequest joinRoomRequest) {
         Users user = usersService.findUserById(joinRoomRequest.userId());
         MultiGameUser gameUser = multiplayerGameService.joinRoom(joinRoomRequest.roomId(), user);
-        return new MultiGameUserResponse(gameUser.getIdx(), gameUser.getMultiGameRoom().getRoomIdx(), gameUser.getUser().getUsersIdx());
+
+        MultiGameUserResponse response = new MultiGameUserResponse(gameUser.getIdx(), gameUser.getMultiGameRoom().getRoomIdx(), gameUser.getUser().getUsersIdx(), gameUser.getUser().getNickName());
+        messagingTemplate.convertAndSend("/topic/room/" + joinRoomRequest.roomId(), multiplayerGameService.getUsersInRoom(joinRoomRequest.roomId()));
+
+        return response;
+    }
+
+    @PostMapping("/leave-room")
+    public void leaveRoom(@RequestBody JoinRoomRequest joinRoomRequest) {
+        multiplayerGameService.leaveRoom(joinRoomRequest.roomId(), joinRoomRequest.userId());
+        messagingTemplate.convertAndSend("/topic/room/" + joinRoomRequest.roomId(), multiplayerGameService.getUsersInRoom(joinRoomRequest.roomId()));
     }
 
     @GetMapping("/room-users")
     public List<MultiGameUserResponse> getUsersInRoom(@RequestParam Long roomId) {
-        List<MultiGameUser> usersInRoom = multiplayerGameService.getUsersInRoom(roomId);
-        return usersInRoom.stream()
-                .map(user -> new MultiGameUserResponse(user.getIdx(), user.getMultiGameRoom().getRoomIdx(), user.getUser().getUsersIdx()))
-                .collect(Collectors.toList());
+        return multiplayerGameService.getUsersInRoom(roomId);
     }
 
     @PostMapping("/start-game")
-    public MultiplayerGameResponse startGame(@RequestParam Long roomId) {
-        MultiplayerGame game = multiplayerGameService.startGame(roomId);
-        return new MultiplayerGameResponse(game.getGameIdx(), game.getMultiGameRoom().getRoomIdx(), game.isStarted());
+    public ResponseEntity<?> startGame(@RequestBody Map<String, Long> requestBody) {
+        try {
+            Long roomId = requestBody.get("roomId");
+            MultiplayerGame game = multiplayerGameService.startGame(roomId);
+            return ResponseEntity.ok(new MultiplayerGameResponse(game.getGameIdx(), game.getMultiGameRoom().getRoomIdx(), game.isStarted()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid room ID");
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unknown Exception: " + e.getMessage());
+        }
     }
 
     @GetMapping("/generate-question")
@@ -77,7 +99,6 @@ public class MultiplayerGameController {
         return new MultiGameRoomResponse(room.getRoomIdx(), room.getRoomName());
     }
 
-    // 방 목록을 가져오는 엔드포인트 추가
     @GetMapping("/rooms")
     public List<MultiGameRoomResponse> getAllRooms() {
         List<MultiGameRoom> rooms = multiplayerGameService.getAllRooms();
