@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Answer Word Frequency</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #0b1727;
+            color: #ffffff;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        .table {
+            background-color: #182b47;
+            color: #ffffff;
+        }
+
+        .thead-dark th {
+            background-color: #1a3556;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <table class="table table-bordered">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">Answer Word</th>
+            <th scope="col">Frequency</th>
+            <th scope="col">Correct Rate (%)</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="entry : ${answerWordStats}">
+            <td th:text="${entry.word}"></td>
+            <td th:text="${entry.frequency}"></td>
+            <td th:text="${entry.correctRate}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

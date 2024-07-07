@@ -97,7 +97,6 @@
                             <th>Nick Name</th>
                             <th>Profile Image</th>
                             <th>ROLE</th>
-                            <th>수정</th>
                             <th>삭제</th>
                         </tr>
                         </thead>
@@ -109,46 +108,6 @@
                             <td th:text="${user.nickName}"></td>
                             <td th:text="${user.profileImage}"></td>
                             <td th:text="${user.role}"></td>
-                            <td>
-                                <button type="button" class="btn btn-primary btn-sm" th:data-toggle="modal" th:data-target="'#editModal-' + ${user.usersIdx}">수정</button>
-                                <!-- Edit Modal -->
-                                <div class="modal fade" th:id="'editModal-' + ${user.usersIdx}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="editModalLabel">사용자 정보 수정</h5>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <form th:action="@{'/admin/users/edit/' + ${user.usersIdx}}" method="post">
-                                                    <div class="form-group">
-                                                        <label for="birthYear">Birth Year</label>
-                                                        <input type="number" class="form-control" id="birthYear" name="birthYear" th:value="${user.birthYear}">
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="gender">Gender</label>
-                                                        <select class="form-control" id="gender" name="gender">
-                                                            <option th:selected="${user.gender == 'Male'}" value="Male">Male</option>
-                                                            <option th:selected="${user.gender == 'Female'}" value="Female">Female</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="nickName">Nick Name</label>
-                                                        <input type="text" class="form-control" id="nickName" name="nickName" th:value="${user.nickName}">
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
-                                                        <button type="submit" class="btn btn-primary">저장</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- End of Edit Modal -->
-                            </td>
                             <td>
                                 <button type="button" class="btn btn-danger btn-sm" th:data-toggle="modal" th:data-target="'#deleteModal-' + ${user.usersIdx}">삭제</button>
                                 <!-- Delete Modal -->
