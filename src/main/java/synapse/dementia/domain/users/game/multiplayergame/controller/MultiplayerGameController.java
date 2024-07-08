@@ -64,6 +64,10 @@ public class MultiplayerGameController {
         try {
             Long roomId = requestBody.get("roomId");
             MultiplayerGame game = multiplayerGameService.startGame(roomId);
+
+            // 게임이 시작되었음을 방의 모든 사용자에게 알림
+            messagingTemplate.convertAndSend("/topic/room/" + roomId, new GameStartResponse(game.getGameIdx(), game.getMultiGameRoom().getRoomIdx(), game.isStarted()));
+
             return ResponseEntity.ok(new MultiplayerGameResponse(game.getGameIdx(), game.getMultiGameRoom().getRoomIdx(), game.isStarted()));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid room ID");
