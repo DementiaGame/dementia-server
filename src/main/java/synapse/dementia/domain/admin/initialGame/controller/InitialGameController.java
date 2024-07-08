@@ -62,7 +62,7 @@ public class InitialGameController {
 		}
 	}
 
-	@GetMapping("/visualization")
+	@GetMapping("/answer-word-frequency")
 	public String getAnswerWordFrequency(Model model) {
 		List<InitialGameQuestion> questions = initialGameService.getAllInitialGameData();
 		Map<String, Long> answerWordFrequency = questions.stream()
