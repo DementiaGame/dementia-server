@@ -25,15 +25,18 @@ public class WebSocketEventListener {
 
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectEvent event) {
-        // Handle WebSocket connection event if necessary
+        // WebSocket 연결 이벤트를 처리합니다. 필요시 구현 가능합니다.
     }
 
     @EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
         String sessionId = event.getSessionId();
+        // 연결이 끊긴 사용자를 조회합니다.
         MultiGameUserResponse user = connectedUsers.remove(sessionId);
         if (user != null) {
+            // 사용자가 방을 떠납니다.
             multiplayerGameService.leaveRoom(user.roomIdx(), user.usersIdx());
+            // 방에 있는 사용자 목록을 업데이트합니다.
             messagingTemplate.convertAndSend("/topic/room/" + user.roomIdx(), multiplayerGameService.getUsersInRoom(user.roomIdx()));
         }
     }
