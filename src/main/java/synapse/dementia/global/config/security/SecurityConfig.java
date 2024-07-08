@@ -1,7 +1,5 @@
 package synapse.dementia.global.config.security;
 
-import java.util.Collections;
-
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -21,13 +19,14 @@ import org.springframework.security.web.context.RequestAttributeSecurityContextR
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
-
 import jakarta.servlet.http.HttpServletResponse;
 import synapse.dementia.global.config.security.customFilter.CustomAuthenticationFailureHandler;
 import synapse.dementia.global.config.security.customFilter.CustomAuthenticationFilter;
 import synapse.dementia.global.config.security.customFilter.CustomAuthenticationSuccessHandler;
 import synapse.dementia.global.config.security.exception.CustomAccessDeniedHandler;
 import synapse.dementia.global.config.security.exception.CustomAuthenticationEntryPoint;
+
+import java.util.Collections;
 
 @Configuration
 public class SecurityConfig {
@@ -39,9 +38,9 @@ public class SecurityConfig {
 	private final CustomAccessDeniedHandler accessDeniedHandler;
 
 	public SecurityConfig(AuthenticationConfiguration authenticationConfiguration,
-		CustomAuthenticationSuccessHandler authenticationSuccessHandler,
-		CustomAuthenticationFailureHandler authenticationFailureHandler,
-		CustomAuthenticationEntryPoint authenticationEntryPoint, CustomAccessDeniedHandler accessDeniedHandler) {
+						  CustomAuthenticationSuccessHandler authenticationSuccessHandler,
+						  CustomAuthenticationFailureHandler authenticationFailureHandler,
+						  CustomAuthenticationEntryPoint authenticationEntryPoint, CustomAccessDeniedHandler accessDeniedHandler) {
 		this.authenticationConfiguration = authenticationConfiguration;
 		this.authenticationSuccessHandler = authenticationSuccessHandler;
 		this.authenticationFailureHandler = authenticationFailureHandler;
@@ -53,10 +52,10 @@ public class SecurityConfig {
 	@ConditionalOnProperty(name = "spring.h2.console.enabled", havingValue = "true")
 	public WebSecurityCustomizer configureH2ConsoleEnable() {
 		return web -> web.ignoring()
-			.requestMatchers(PathRequest.toH2Console());
+				.requestMatchers(PathRequest.toH2Console());
 	}
 
-	//  CORS 설정
+	// CORS 설정
 	CorsConfigurationSource corsConfigurationSource() {
 		return request -> {
 			CorsConfiguration config = new CorsConfiguration();
@@ -70,66 +69,37 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
 		http
-			.cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
-			.csrf(AbstractHttpConfigurer::disable)
-			.formLogin(AbstractHttpConfigurer::disable)
-			.httpBasic(AbstractHttpConfigurer::disable)
-			// .rememberMe(r -> r
-			// 	.rememberMeParameter("remember")
-			// 	.tokenValiditySeconds(3600)
-			// 	.alwaysRemember(false))
-			.headers(httpSecurityHeadersConfigurer ->
-				httpSecurityHeadersConfigurer.frameOptions(HeadersConfigurer
-					.FrameOptionsConfig::sameOrigin)
-			)
-			.authorizeHttpRequests(authorize -> authorize
-				.requestMatchers("/**", "/users/signup", "/users/signin", "/admin/**","/ws/**").permitAll()
-				// .requestMatchers("/admin/**").hasRole(Role.ROLE_ADMIN.name())
-				.anyRequest().authenticated())
-			// authentication Manager를 controller에서 호출
-			// .addFilterBefore(
-			// 	ajaxAuthenticationFilter(),
-			// 	UsernamePasswordAuthenticationFilter.class)
-			// 세션 관리
-			.sessionManagement(session -> session
-					.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-					.sessionFixation((sessionFixation) -> sessionFixation.newSession()) // 로그인 시 세션 새로 생성
-					.maximumSessions(1)
-					.maxSessionsPreventsLogin(true)
-				//.sessionRegistry()
-			)
-			// 예외처리
-			.exceptionHandling(config -> config
-				.authenticationEntryPoint(authenticationEntryPoint)
-				.accessDeniedHandler(accessDeniedHandler))
-			// 로그아웃
-			.logout(logout -> logout
-				.logoutRequestMatcher(new AntPathRequestMatcher("/users/signout", "POST"))
-				.invalidateHttpSession(true)
-				.deleteCookies("JSESSIONID")
-				.logoutSuccessHandler(((request, response, authentication) -> {
-					response.setStatus(HttpServletResponse.SC_OK);
-				})))
-		;
+				.cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
+				.csrf(AbstractHttpConfigurer::disable) // CSRF 보호 비활성화
+				.formLogin(AbstractHttpConfigurer::disable)
+				.httpBasic(AbstractHttpConfigurer::disable)
+				.headers(httpSecurityHeadersConfigurer ->
+						httpSecurityHeadersConfigurer.frameOptions(HeadersConfigurer
+								.FrameOptionsConfig::sameOrigin)
+				)
+				.authorizeHttpRequests(authorize -> authorize
+						.requestMatchers("/", "/ws/**").permitAll() // WebSocket 엔드포인트 허용
+						.anyRequest().authenticated())
+				.sessionManagement(session -> session
+						.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+						.sessionFixation((sessionFixation) -> sessionFixation.newSession())
+						.maximumSessions(1)
+						.maxSessionsPreventsLogin(true))
+				.exceptionHandling(config -> config
+						.authenticationEntryPoint(authenticationEntryPoint)
+						.accessDeniedHandler(accessDeniedHandler))
+				.logout(logout -> logout
+						.logoutRequestMatcher(new AntPathRequestMatcher("/users/signout", "POST"))
+						.invalidateHttpSession(true)
+						.deleteCookies("JSESSIONID")
+						.logoutSuccessHandler((request, response, authentication) -> {
+							response.setStatus(HttpServletResponse.SC_OK);
+						}));
 
 		return http.build();
 	}
 
-	// @Bean
-	// public AuthenticationManager authenticationManager(
-	// 	UserDetailsService userDetailsService,
-	// 	PasswordEncoder passwordEncoder
-	// ) {
-	// 	DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-	// 	authenticationProvider.setUserDetailsService(userDetailsService);
-	// 	authenticationProvider.setPasswordEncoder(passwordEncoder);
-	//
-	// 	return new ProviderManager(authenticationProvider);
-	// }
-
-	// 필터 단에서 인증 처리 시 필요
 	@Bean
 	public CustomAuthenticationFilter ajaxAuthenticationFilter() throws Exception {
 		CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter();
@@ -138,10 +108,10 @@ public class SecurityConfig {
 		customAuthenticationFilter.setAuthenticationFailureHandler(authenticationFailureHandler);
 
 		customAuthenticationFilter.setSecurityContextRepository(
-			new DelegatingSecurityContextRepository(
-				new RequestAttributeSecurityContextRepository(),
-				new HttpSessionSecurityContextRepository()
-			));
+				new DelegatingSecurityContextRepository(
+						new RequestAttributeSecurityContextRepository(),
+						new HttpSessionSecurityContextRepository()
+				));
 
 		return customAuthenticationFilter;
 	}
