@@ -79,7 +79,7 @@ public class SecurityConfig {
 								.FrameOptionsConfig::sameOrigin)
 				)
 				.authorizeHttpRequests(authorize -> authorize
-						.requestMatchers("/", "/ws/**").permitAll() // WebSocket 엔드포인트 허용
+						.requestMatchers("/**","/users/signup","users/signin","/admin/**" ,"/ws/**").permitAll() // WebSocket 엔드포인트 허용
 						.anyRequest().authenticated())
 				.sessionManagement(session -> session
 						.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
