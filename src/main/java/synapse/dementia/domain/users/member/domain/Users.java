@@ -2,13 +2,10 @@ package synapse.dementia.domain.users.member.domain;
 
 import java.util.List;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.OneToMany;
-import lombok.Setter;
-
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -17,8 +14,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.Setter;
 import synapse.dementia.domain.users.game.initialgame.domain.SelectedGameTopic;
 import synapse.dementia.global.base.BaseEntity;
 
@@ -80,5 +79,12 @@ public class Users extends BaseEntity {
 		this.birthYear = birthYear;
 		this.gender = gender;
 		this.nickName = nickName;
+	}
+
+	public void updateUsers(Integer birthYear, Gender gender, String nickName, String profileImage) {
+		this.birthYear = birthYear;
+		this.gender = gender;
+		this.nickName = nickName;
+		this.profileImage = profileImage;
 	}
 }

@@ -4,8 +4,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import synapse.dementia.domain.users.member.domain.Gender;
-import synapse.dementia.domain.users.member.domain.Role;
-import synapse.dementia.domain.users.member.domain.Users;
 
 public record UsersInfoUpdateReq(
 	@NotBlank(message = "닉네임을 입력해주세요.")
@@ -16,9 +14,9 @@ public record UsersInfoUpdateReq(
 	@Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*?_]).{8,16}$", message = "비밀번호는 8~16자리면서 알파벳, 숫자, 특수문자를 포함해야 합니다.")
 	String password,
 
-	@NotBlank(message = "재확인 비밀번호를 입력해주세요.")
-	@Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*?_]).{8,16}$", message = "비밀번호는 8~16자리면서 알파벳, 숫자, 특수문자를 포함해야 합니다.")
-	String secondPassword,
+	// @NotBlank(message = "재확인 비밀번호를 입력해주세요.")
+	// @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*?_]).{8,16}$", message = "비밀번호는 8~16자리면서 알파벳, 숫자, 특수문자를 포함해야 합니다.")
+	// String secondPassword,
 
 	@NotNull(message = "출생연도를 입력해주세요.")
 	Integer birthYear,

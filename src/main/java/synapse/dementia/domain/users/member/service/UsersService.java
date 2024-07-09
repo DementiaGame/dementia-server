@@ -11,20 +11,20 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import synapse.dementia.domain.users.member.domain.Users;
-import synapse.dementia.domain.users.member.dto.request.UsersSignUpReq;
-import synapse.dementia.domain.users.member.dto.response.UsersSignUpRes;
-import synapse.dementia.domain.users.member.repository.UsersRepository;
 import synapse.dementia.domain.users.member.domain.CustomUserDetails;
+import synapse.dementia.domain.users.member.domain.Users;
 import synapse.dementia.domain.users.member.dto.request.UsersInfoUpdateReq;
 import synapse.dementia.domain.users.member.dto.request.UsersSignInReq;
+import synapse.dementia.domain.users.member.dto.request.UsersSignUpReq;
 import synapse.dementia.domain.users.member.dto.response.UsersInfoRes;
 import synapse.dementia.domain.users.member.dto.response.UsersSignInRes;
+import synapse.dementia.domain.users.member.dto.response.UsersSignUpRes;
+import synapse.dementia.domain.users.member.repository.UsersRepository;
+import synapse.dementia.global.config.security.customFilter.CustomAuthenticationToken;
 import synapse.dementia.global.exception.BadRequestException;
 import synapse.dementia.global.exception.ConflictException;
 import synapse.dementia.global.exception.ErrorResult;
 import synapse.dementia.global.exception.NotFoundException;
-import synapse.dementia.global.config.security.customFilter.CustomAuthenticationToken;
 
 @Service
 public class UsersService {
@@ -43,13 +43,6 @@ public class UsersService {
 	@Transactional
 	public UsersSignUpRes signUp(UsersSignUpReq dto) {
 		// todo: 1. 중복 닉네임 체크 2. 비밀번호 재확인 3. 비밀번호 암호화 4. save 5. return user's nickName in response
-		if (usersRepository.findByNickName(dto.nickName()).isPresent()) {
-			throw new ConflictException(ErrorResult.NICK_NAME_DUPLICATION_CONFLICT);
-		}
-
-		if (!dto.password().equals(dto.secondPassword())) {
-			throw new BadRequestException(ErrorResult.PASSWORD_MISMATCH_BAD_REQUEST);
-		}
 		checkDuplicatedNickName(dto.nickName());
 		checkMismatchPassword(dto.password(), dto.secondPassword());
 
@@ -104,7 +97,7 @@ public class UsersService {
 	@Transactional
 	public boolean findUserByNickName(String nickName) {
 		Optional<Users> user = usersRepository.findByNickName(nickName);
-		if(user.isPresent()) {
+		if (user.isPresent()) {
 			return true;
 		} else {
 			return false;
@@ -117,7 +110,6 @@ public class UsersService {
 		//checkMismatchPassword(dto.password(), dto.secondPassword());
 
 		CustomUserDetails userDetails = getCustomUserDetails();
-		//Users user = usersRepository.updateUserInfoByUserId(userDetails.getUsersIdx(), dto);
 
 		Users user = usersRepository.findById(userDetails.getUsersIdx()).orElseThrow(() -> {
 			throw new NotFoundException(ErrorResult.USER_NOT_EXIST_BAD_REQUEST);
@@ -132,7 +124,8 @@ public class UsersService {
 			checkDuplicatedNickName(dto.nickName());
 		}
 
-		//usersRepository.save(user);
+		user.updateUsers(dto.birthYear(), dto.gender(), dto.nickName(), dto.profileImage());
+		usersRepository.save(user);
 
 		return new UsersInfoRes(
 			user.getUsersIdx(),
@@ -179,6 +172,6 @@ public class UsersService {
 
 	public Users findUserById(Long userId) {
 		return usersRepository.findById(userId)
-				.orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
+			.orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
 	}
 }
