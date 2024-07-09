@@ -51,10 +51,17 @@ public class UsersService {
 			throw new BadRequestException(ErrorResult.PASSWORD_MISMATCH_BAD_REQUEST);
 		}
 		checkDuplicatedNickName(dto.nickName());
+		checkMismatchPassword(dto.password(), dto.secondPassword());
 
 		Users user = dto.toEntity(bCryptPasswordEncoder.encode(dto.password()));
 		usersRepository.save(user);
 		return new UsersSignUpRes(user.getUsersIdx(), user.getNickName());
+	}
+
+	public static void checkMismatchPassword(String password, String secondPassword) {
+		if (!password.equals(secondPassword)) {
+			throw new BadRequestException(ErrorResult.PASSWORD_MISMATCH_BAD_REQUEST);
+		}
 	}
 
 	// @Transactional(readOnly = true)
@@ -106,14 +113,8 @@ public class UsersService {
 
 	@Transactional
 	public UsersInfoRes updateUser(UsersInfoUpdateReq dto) {
-		// 중복 닉네임 체크
-		if (usersRepository.findByNickName(dto.nickName()).isPresent()) {
-			throw new ConflictException(ErrorResult.NICK_NAME_DUPLICATION_CONFLICT);
-		}
 		// 비밀번호 재확인
-		if (!dto.password().equals(dto.secondPassword())) {
-			throw new BadRequestException(ErrorResult.PASSWORD_MISMATCH_BAD_REQUEST);
-		}
+		//checkMismatchPassword(dto.password(), dto.secondPassword());
 
 		CustomUserDetails userDetails = getCustomUserDetails();
 		//Users user = usersRepository.updateUserInfoByUserId(userDetails.getUsersIdx(), dto);
@@ -122,15 +123,10 @@ public class UsersService {
 			throw new NotFoundException(ErrorResult.USER_NOT_EXIST_BAD_REQUEST);
 		});
 
-		// 변경하지 않을 데이터도 요청에서 그대로 보내줘야 함, 더티체킹
-		user.setBirthYear(dto.birthYear());
-		user.setGender(dto.gender());
-		user.setNickName(dto.nickName());
-		user.setPassword(bCryptPasswordEncoder.encode(dto.password()));
-		//user.setDeleted(dto.deleted());
-		user.setFaceData(dto.faceData());
-		user.setProfileImage(dto.profileImage());
-		//user.setRole(dto.role());
+		// 현재 비밀번호 체크
+		if (!bCryptPasswordEncoder.matches(dto.password(), user.getPassword())) {
+			throw new BadRequestException(ErrorResult.PASSWORD_MISMATCH_BAD_REQUEST);
+		}
 		// 닉네임이 수정된 경우 중복 닉네임 체크
 		if (!user.getNickName().equals(dto.nickName())) {
 			checkDuplicatedNickName(dto.nickName());
