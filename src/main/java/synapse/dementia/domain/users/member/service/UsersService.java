@@ -50,6 +50,7 @@ public class UsersService {
 		if (!dto.password().equals(dto.secondPassword())) {
 			throw new BadRequestException(ErrorResult.PASSWORD_MISMATCH_BAD_REQUEST);
 		}
+		checkDuplicatedNickName(dto.nickName());
 
 		Users user = dto.toEntity(bCryptPasswordEncoder.encode(dto.password()));
 		usersRepository.save(user);
@@ -130,6 +131,10 @@ public class UsersService {
 		user.setFaceData(dto.faceData());
 		user.setProfileImage(dto.profileImage());
 		//user.setRole(dto.role());
+		// 닉네임이 수정된 경우 중복 닉네임 체크
+		if (!user.getNickName().equals(dto.nickName())) {
+			checkDuplicatedNickName(dto.nickName());
+		}
 
 		//usersRepository.save(user);
 
@@ -143,6 +148,12 @@ public class UsersService {
 			user.getProfileImage(),
 			user.getRole()
 		);
+	}
+
+	public void checkDuplicatedNickName(String nickName) {
+		if (usersRepository.findByNickName(nickName).isPresent()) {
+			throw new ConflictException(ErrorResult.NICK_NAME_DUPLICATION_CONFLICT);
+		}
 	}
 
 	@Transactional
