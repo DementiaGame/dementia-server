@@ -74,7 +74,7 @@ public class UsersService {
 	// 		.collect(Collectors.toList());
 	// }
 
-	@Transactional
+	@Transactional(readOnly = true)
 	public UsersInfoRes findCurrentUser() {
 		// 내부 서버 세션에서 authentication 객체 로드
 		CustomUserDetails userDetails = getCustomUserDetails();
