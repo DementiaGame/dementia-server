@@ -28,9 +28,13 @@ public class SelectedGameTopic extends BaseEntity {
     @Column(name = "topic_name", nullable = false)
     private String topicName;
 
+    @OneToMany(mappedBy = "selectedGameTopic", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<InitialGameQuestion> initialGameQuestions;
+
     @Builder
-    public SelectedGameTopic(Users user, String topicName) {
+    public SelectedGameTopic(Users user, String topicName, List<InitialGameQuestion> initialGameQuestions) {
         this.user = user;
         this.topicName = topicName;
+        this.initialGameQuestions = initialGameQuestions;
     }
 }
