@@ -19,7 +19,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import synapse.dementia.domain.users.game.initialgame.domain.InitialGameQuestion;
+import synapse.dementia.domain.users.game.initialgame.domain.InitialGameResult;
 import synapse.dementia.domain.users.game.initialgame.domain.SelectedGameTopic;
+import synapse.dementia.domain.users.game.multiplayergame.domain.MultiGameResult;
+import synapse.dementia.domain.users.game.multiplayergame.domain.MultiGameUser;
 import synapse.dementia.global.base.BaseEntity;
 
 @Entity
@@ -63,6 +67,18 @@ public class Users extends BaseEntity {
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<SelectedGameTopic> selectedGameTopics;
+
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<InitialGameResult> initialGameResults;
+
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<InitialGameQuestion> initialGameQuestions;
+
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<MultiGameResult> multiGameResults;
+
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<MultiGameUser> multiGameUsers;
 
 	protected Users() {
 	}

@@ -63,7 +63,6 @@
                     <th>Nick Name</th>
                     <th>Profile Image</th>
                     <th>ROLE</th>
-                    <th>수정</th>
                     <th>삭제</th>
                 </tr>
                 </thead>
@@ -76,67 +75,9 @@
                     <td th:text="${user.profileImage}"></td>
                     <td th:text="${user.role}"></td>
                     <td>
-                        <button type="button" class="btn btn-primary btn-sm" th:data-toggle="modal"
-                                th:data-target="'#editModal-' + ${user.usersIdx}">수정
-                        </button>
-                        <!-- Edit Modal -->
-                        <div class="modal fade" th:id="'editModal-' + ${user.usersIdx}" tabindex="-1" role="dialog"
-                             aria-labelledby="editModalLabel" aria-hidden="true">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="editModalLabel">사용자 정보 수정</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <form id="editForm-${user.usersIdx}">
-                                            <input type="hidden" id="userIdx-${user.usersIdx}"
-                                                   th:value="${user.usersIdx}">
-                                            <div class="form-group">
-                                                <label for="birthYear-${user.usersIdx}">Birth Year</label>
-                                                <input type="number" class="form-control"
-                                                       id="birthYear-${user.usersIdx}" th:value="${user.birthYear}">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="gender-${user.usersIdx}">Gender</label>
-                                                <select class="form-control" id="gender-${user.usersIdx}">
-                                                    <option th:selected="${user.gender == 'Male'}" value="Male">Male
-                                                    </option>
-                                                    <option th:selected="${user.gender == 'Female'}" value="Female">
-                                                        Female
-                                                    </option>
-                                                </select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="nickName-${user.usersIdx}">Nick Name</label>
-                                                <input type="text" class="form-control" id="nickName-${user.usersIdx}"
-                                                       th:value="${user.nickName}">
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                                                    취소
-                                                </button>
-                                                <button type="button" class="btn btn-primary"
-                                                        onclick="submitEditForm(${user.usersIdx}, '[[${_csrf.token}]]')">
-                                                    저장
-                                                </button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- End of Edit Modal -->
-                    </td>
-                    <td>
-                        <button type="button" class="btn btn-danger btn-sm" th:data-toggle="modal"
-                                th:data-target="'#deleteModal-' + ${user.usersIdx}">삭제
-                        </button>
+                        <button type="button" class="btn btn-danger btn-sm" th:data-toggle="modal" th:data-target="'#deleteModal-' + ${user.usersIdx}">삭제</button>
                         <!-- Delete Modal -->
-                        <div class="modal fade" th:id="'deleteModal-' + ${user.usersIdx}" tabindex="-1" role="dialog"
-                             aria-labelledby="deleteModalLabel" aria-hidden="true">
+                        <div class="modal fade" th:id="'deleteModal-' + ${user.usersIdx}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
@@ -150,10 +91,7 @@
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
-                                        <button type="button" class="btn btn-danger"
-                                                th:onclick="'confirmDelete(' + ${user.usersIdx} + ', \'[[${_csrf.token}]]\')'">
-                                            삭제
-                                        </button>
+                                        <button type="button" class="btn btn-danger" th:onclick="'confirmDelete(' + ${user.usersIdx} + ', \'[[${_csrf.token}]]\')'">삭제</button>
                                     </div>
                                 </div>
                             </div>
@@ -170,43 +108,6 @@
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script>
-
-    function submitEditForm(userIdx, csrfToken) {
-        const userIdxValue = document.querySelector(`#userIdx-${userIdx}`).value;
-        const birthYear = document.querySelector(`#birthYear-${userIdx}`).value;
-        const gender = document.querySelector(`#gender-${userIdx}`).value;
-        const nickName = document.querySelector(`#nickName-${userIdx}`).value;
-
-        console.log(`Submitting form for userIdx: ${userIdx}, birthYear: ${birthYear}, gender: ${gender}, nickName: ${nickName}`);
-
-        const requestBody = {
-            userIdx: parseInt(userIdxValue),
-            birthYear: parseInt(birthYear),
-            gender: gender,
-            nickName: nickName
-        };
-
-        fetch('/admin/users/edit', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken
-            },
-            body: JSON.stringify(requestBody)
-        }).then(response => response.json())
-            .then(data => {
-                if (data === '사용자 정보가 성공적으로 수정되었습니다.') {
-                    alert('사용자 정보가 성공적으로 수정되었습니다.');
-                    window.location.reload();
-                } else {
-                    alert('사용자 정보 수정 중 오류가 발생했습니다.');
-                }
-            }).catch(error => {
-            console.error('Error:', error);
-            alert('사용자 정보 수정 중 오류가 발생했습니다.');
-        });
-    }
-
     function confirmDelete(userIdx, csrfToken) {
         const requestBody = {
             userIdx: userIdx
@@ -233,8 +134,6 @@
             alert('사용자 삭제 중 오류가 발생했습니다.');
         });
     }
-
-
 </script>
 </body>
 </html>
